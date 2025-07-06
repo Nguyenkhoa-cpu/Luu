@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tìm Dãy Số Phong Thủy (v3 - Xuất Excel)</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #0056b3; --secondary-color: #1a73e8; --background-color: #f0f2f5;
+            --card-background: #ffffff; --text-color: #333; --border-radius: 8px;
+            --box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--background-color); color: var(--text-color); margin: 0;
+            padding: 15px; display: flex; justify-content: center;
+        }
+        .container { max-width: 600px; width: 100%; }
+        h1 { color: var(--primary-color); text-align: center; margin-bottom: 20px; font-size: 24px;}
+        .card { background-color: var(--card-background); border-radius: var(--border-radius); box-shadow: var(--box-shadow); padding: 20px; }
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; margin-bottom: 8px; font-weight: bold; font-size: 14px; }
+        .input-group input { width: calc(100% - 22px); padding: 10px; border-radius: 4px; border: 1px solid #ccc; font-size: 16px; }
+        .button-group { margin-top: 20px; display: flex; gap: 10px; }
+        .btn { flex-grow: 1; padding: 12px; border: none; border-radius: var(--border-radius); font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.2s ease-in-out; }
+        .btn-primary { background-color: var(--primary-color); color: white; }
+        .btn-secondary { background-color: #17a2b8; color: white; }
+        .btn:disabled { background-color: #ccc; cursor: not-allowed; }
+        #status-text { text-align: center; margin-top: 15px; font-weight: bold; color: #d9534f; }
+        #results-area { margin-top: 15px; background-color: #282c34; color: #abb2bf; padding: 15px; border-radius: var(--border-radius); overflow-x: auto; font-family: "Consolas", "Menlo", monospace; font-size: 14px; white-space: pre; min-height: 100px;}
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Tìm Dãy Số Phong Thủy (v3)</h1>
+    
+    <div class="card">
+        <div class="input-group">
+            <label for="total_len">🔢 Độ dài chuỗi (2-15):</label>
+            <input type="number" id="total_len" value="6" min="2" max="15">
+        </div>
+        <div class="input-group">
+            <label for="fix_A">🔠 Cố định đầu A (vd: 09):</label>
+            <input type="text" id="fix_A" placeholder="Để trống nếu không có">
+        </div>
+        <div class="input-group">
+            <label for="fix_B">🔡 Cố định đuôi B (vd: 86):</label>
+            <input type="text" id="fix_B" placeholder="Để trống nếu không có">
+        </div>
+        <div class="input-group">
+            <label for="x">☯️ Quẻ Thượng (x, 0-8):</label>
+            <input type="number" id="x" placeholder="Nhập số từ 0 đến 8" min="0" max="8">
+        </div>
+        <div class="input-group">
+            <label for="y">☯️ Quẻ Hạ (y, 0-8):</label>
+            <input type="number" id="y" placeholder="Nhập số từ 0 đến 8" min="0" max="8">
+        </div>
+        <div class="input-group">
+            <label for="z">⚡ Hào Động (z, 0-6):</label>
+            <input type="number" id="z" placeholder="Nhập số từ 0 đến 6" min="0" max="6">
+        </div>
+    </div>
+
+    <div class="button-group">
+        <button id="btn-timkiem" class="btn btn-primary">▶️ Thực Hiện</button>
+        <button id="btn-xuat" class="btn btn-secondary" disabled>📄 Xuất Excel (.xlsx)</button>
+    </div>
+    
+    <p id="status-text"></p>
+    <div id="results-area">Kết quả sẽ hiển thị ở đây...</div>
+</div>
+
+<script>
+    const totalLenEl = document.getElementById('total_len');
+    const fixAEl = document.getElementById('fix_A');
+    const fixBEl = document.getElementById('fix_B');
+    const xEl = document.getElementById('x');
+    const yEl = document.getElementById('y');
+    const zEl = document.getElementById('z');
+    const findBtn = document.getElementById('btn-timkiem');
+    const exportBtn = document.getElementById('btn-xuat');
+    const statusText = document.getElementById('status-text');
+    const resultsArea = document.getElementById('results-area');
+    let lastResults = [];
+
+    findBtn.addEventListener('click', () => {
+        findBtn.disabled = true;
+        exportBtn.disabled = true;
+        resultsArea.textContent = 'Đang xử lý, vui lòng chờ...';
+        statusText.textContent = '';
+        lastResults = [];
+
+        setTimeout(() => {
+            try {
+                runSearch();
+            } catch (e) {
+                statusText.textContent = 'Lỗi nghiêm trọng: ' + e.message;
+                resultsArea.textContent = 'Đã xảy ra lỗi. Vui lòng kiểm tra lại các giá trị nhập.';
+            } finally {
+                findBtn.disabled = false;
+            }
+        }, 50);
+    });
+    
+    // === HÀM XUẤT EXCEL ĐÃ NÂNG CẤP ===
+    exportBtn.addEventListener('click', () => {
+        if (lastResults.length === 0) return;
+        
+        // 1. Tạo tiêu đề
+        const headers = ["Dãy gốc", "Phần A", "Tổng A", "Phần B", "Tổng B", "Tổng A+B"];
+        // 2. Thêm tiêu đề vào đầu mảng dữ liệu
+        const dataToExport = [headers, ...lastResults];
+        
+        // 3. Tạo một trang tính (worksheet) từ mảng dữ liệu
+        const ws = XLSX.utils.aoa_to_sheet(dataToExport);
+
+        // 4. (Tùy chọn) Điều chỉnh độ rộng cột cho đẹp
+        ws['!cols'] = [
+            { wch: 15 }, // Dãy gốc
+            { wch: 15 }, // Phần A
+            { wch: 8 },  // Tổng A
+            { wch: 15 }, // Phần B
+            { wch: 8 },  // Tổng B
+            { wch: 10 }  // Tổng A+B
+        ];
+        
+        // 5. Tạo một sổ làm việc (workbook) mới và thêm trang tính vào
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "KetQua");
+        
+        // 6. Xuất file Excel với tên được định sẵn
+        XLSX.writeFile(wb, "KetQua_TimSoPhongThuy.xlsx");
+    });
+
+    function sumDigits(s) {
+        let sum = 0;
+        for (let i = 0; i < s.length; i++) {
+            sum += parseInt(s[i], 10);
+        }
+        return sum;
+    }
+
+    function generateValidParts(length, prefix_suffix, target_mod_val, is_suffix) {
+        const valid_parts = [];
+        const fixed_len = prefix_suffix.length;
+        const remaining_length = length - fixed_len;
+
+        if (remaining_length < 0) return [];
+        if (remaining_length === 0) {
+            const sum_fixed = sumDigits(prefix_suffix);
+            if (sum_fixed % 8 === target_mod_val % 8) {
+                valid_parts.push({ str: prefix_suffix, sum: sum_fixed });
+            }
+            return valid_parts;
+        }
+        
+        const sum_fixed_part = sumDigits(prefix_suffix);
+        const max_i = Math.pow(10, remaining_length);
+
+        for (let i = 0; i < max_i; i++) {
+            const remaining_str = i.toString().padStart(remaining_length, '0');
+            const current_sum = sumDigits(remaining_str) + sum_fixed_part;
+            if (current_sum % 8 === target_mod_val % 8) {
+                const final_str = is_suffix ? remaining_str + prefix_suffix : prefix_suffix + remaining_str;
+                valid_parts.push({ str: final_str, sum: current_sum });
+            }
+        }
+        return valid_parts;
+    }
+
+    function runSearch() {
+        const total_len = parseInt(totalLenEl.value, 10);
+        const fix_A = fixAEl.value.replace(/\s/g, '');
+        const fix_B = fixBEl.value.replace(/\s/g, '');
+        const x = parseInt(xEl.value || '0', 10);
+        const y = parseInt(yEl.value || '0', 10);
+        const z = parseInt(zEl.value || '0', 10);
+
+        if (total_len > 10) {
+            statusText.textContent = `CẢNH BÁO: Độ dài ${total_len} sẽ chạy RẤT LÂU và có thể làm treo trình duyệt!`;
+            if (!confirm(`Độ dài chuỗi ${total_len} có thể mất hàng phút hoặc làm treo trình duyệt. Sếp có chắc chắn muốn tiếp tục không?`)) {
+                 resultsArea.textContent = 'Đã hủy.';
+                 statusText.textContent = '';
+                 return;
+            }
+        }
+
+        const len_A = Math.floor(total_len / 2);
+        const len_B = total_len - len_A;
+
+        if (fix_A.length > len_A || fix_B.length > len_B) {
+            statusText.textContent = 'Lỗi: Độ dài phần cố định lớn hơn độ dài phần tương ứng.';
+            return;
+        }
+
+        const valid_parts_A = generateValidParts(len_A, fix_A, x, false);
+        const valid_parts_B = generateValidParts(len_B, fix_B, y, true);
+
+        const kq = [];
+        const seen_normalized_pairs = new Set();
+        for (const partA of valid_parts_A) {
+            for (const partB of valid_parts_B) {
+                if ((partA.sum + partB.sum) % 6 === z % 6) {
+                     const a_normalized = partA.str.split('').sort().join('');
+                     const b_normalized = partB.str.split('').sort().join('');
+                     const current_normalized_pair = `${a_normalized}|${b_normalized}`;
+                     if (!seen_normalized_pairs.has(current_normalized_pair)) {
+                        kq.push([partA.str + partB.str, partA.str, partA.sum, partB.str, partB.sum, partA.sum + partB.sum]);
+                        seen_normalized_pairs.add(current_normalized_pair);
+                     }
+                }
+            }
+        }
+        
+        displayResults(kq);
+    }
+    
+    function displayResults(kq) {
+        statusText.textContent = `Tìm thấy ${kq.length} kết quả phù hợp (đã lọc hoán vị).`;
+        if (kq.length === 0) {
+            resultsArea.textContent = 'Không tìm thấy kết quả nào.';
+            exportBtn.disabled = true;
+            return;
+        }
+
+        lastResults = kq; // Lưu kết quả dưới dạng mảng để xuất excel
+        let output = 'Dãy gốc | Phần A (Tổng) | Phần B (Tổng) | Tổng A+B\n';
+        output += '-'.repeat(60) + '\n';
+        const displayLimit = 500;
+        kq.slice(0, displayLimit).forEach(row => {
+            output += `${row[0].padEnd(8)}| ${row[1].padEnd(6)} (${String(row[2]).padEnd(2)}) | ${row[3].padEnd(6)} (${String(row[4]).padEnd(2)}) | ${row[5]}\n`;
+        });
+        if(kq.length > displayLimit) {
+            output += `\n... và ${kq.length - displayLimit} kết quả khác (xuất file Excel để xem hết).`
+        }
+
+        resultsArea.textContent = output;
+        exportBtn.disabled = false;
+    }
+</script>
+
+</body>
+</html>

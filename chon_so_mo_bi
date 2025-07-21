@@ -1,0 +1,1940 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📿 DÃY SỐ THEO KINH DỊCH VÀ THẦN SỐ HỌC</title>
+<style>
+    /* Reset và Box Sizing để dễ quản lý bố cục */
+    *, *::before, *::after {
+        box-sizing: border-box;
+    }
+
+    /* Định nghĩa các biến màu sắc (đã giữ nguyên và sắp xếp gọn hơn) */
+    :root {
+        --blue: #007bff;
+        --blue-dark: #0056b3;
+        --grey: #6c757d;
+        --grey-dark: #5a6268;
+        --cat: #14804a; /* Tốt */
+        --trungbinh: #f39c12; /* Trung bình */
+        --xau: #c0392b; /* Xấu */
+    }
+
+    /* Cài đặt chung cho body */
+    body {
+        font-family: 'Segoe UI', Tahoma, sans-serif;
+        background: #f0f2f5;
+        margin: 0;
+        padding: 20px;
+        font-size: 15px;
+        line-height: 1.6; /* Tăng line-height cho dễ đọc */
+        color: #333; /* Màu chữ mặc định */
+    }
+
+    /* Vùng bao quanh nội dung chính */
+    .wrap {
+        max-width: 1450px;
+        margin: auto;
+        background: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 8px 16px rgba(0,0,0,.08);
+    }
+
+    /* CSS cho tiêu đề mới */
+    .app-header {
+        text-align: center;
+        margin-bottom: 25px; /* Khoảng cách dưới tiêu đề */
+    }
+
+    .app-title {
+        font-size: 2.2em; /* Kích thước chữ lớn hơn cho tiêu đề chính */
+        color: var(--blue-dark); /* Sử dụng màu xanh đậm đã định nghĩa */
+        margin-bottom: 5px; /* Khoảng cách giữa tiêu đề và phụ đề */
+        text-transform: uppercase; /* Chữ in hoa */
+        font-weight: 700;
+    }
+
+    .app-subtitle {
+        font-size: 1.1em; /* Kích thước chữ cho phụ đề */
+        color: #555;
+        font-style: italic; /* Chữ nghiêng */
+    }
+
+    /* Thiết lập lưới chung */
+    .grid {
+        display: grid;
+        gap: 25px;
+    }
+
+    /* Lưới hẹp cho bố cục 2 cột */
+    .grid-narrow {
+        grid-template-columns: 260px 1fr;
+    }
+
+    /* Kiểu dáng form nhập liệu */
+    .form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    /* Kiểu dáng nhãn (label) */
+    label {
+        font-weight: 600;
+        color: #4a6a8a;
+        margin-bottom: 5px; /* Thêm khoảng cách dưới label */
+        display: block; /* Đảm bảo label chiếm dòng riêng */
+    }
+
+    /* Kiểu dáng input và select */
+    input[type="text"], input[type="number"], select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #cdd4da;
+        border-radius: 6px;
+        font-size: 1em;
+        line-height: 1.5; /* Đồng bộ line-height */
+    }
+
+    /* Kiểu dáng nút bấm chung */
+    .btn {
+        padding: 12px 18px;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        color: #fff;
+        cursor: pointer;
+        transition: background-color .2s ease-in-out; /* Đổi sang ease-in-out */
+        font-size: 1em;
+        text-align: center;
+        text-decoration: none; /* Đảm bảo không có gạch chân nếu là thẻ a */
+        display: inline-block; /* Để padding và margin hoạt động đúng */
+    }
+
+    /* Màu nút chính */
+    .primary { background: var(--blue); }
+    .primary:hover { background: var(--blue-dark); }
+
+    /* Màu nút phụ */
+    .grey { background: var(--grey); }
+    .grey:hover { background: var(--grey-dark); }
+
+    /* Kiểu dáng thanh tab */
+    .tabs {
+        display: flex;
+        border-bottom: 2px solid #ccc;
+        margin-bottom: 20px;
+        overflow-x: auto; /* Thêm cuộn ngang nếu quá nhiều tab trên màn hình nhỏ */
+        white-space: nowrap; /* Ngăn các tab xuống dòng */
+    }
+
+    /* Kiểu dáng các nút tab */
+    .tabs button {
+        flex: 1; /* Chia đều không gian */
+        min-width: 150px; /* Chiều rộng tối thiểu cho mỗi tab */
+        background: #f1f1f1;
+        padding: 14px 0;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        font-size: 1.05em;
+        transition: background-color .2s ease-in-out, color .2s ease-in-out;
+        border-radius: 8px 8px 0 0; /* Bo tròn góc trên */
+        margin-right: 2px; /* Khoảng cách giữa các tab */
+    }
+    .tabs button:last-child {
+        margin-right: 0;
+    }
+    .tabs button:hover { background: #e1e1e1; }
+    .tabs button.active {
+        background: var(--blue);
+        color: #fff;
+        border-bottom: 3px solid var(--blue); /* Highlight tab active */
+        margin-bottom: -1px; /* Kéo lên 1px để che đường border của .tabs */
+    }
+
+    /* Ẩn các tab mặc định */
+    .tab {
+        display: none;
+        padding: 15px 0; /* Thêm padding cho nội dung tab */
+    }
+
+    /* Kiểu dáng bảng */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: .95em;
+        table-layout: fixed; /* Cố định layout bảng để tránh tràn */
+    }
+
+    /* Kiểu dáng tiêu đề bảng và ô dữ liệu */
+    th, td {
+        border: 1px solid #e2e8f0;
+        padding: 10px 12px;
+        text-align: left;
+        vertical-align: middle;
+        word-break: break-word; /* Ngắt từ khi quá dài */
+        overflow-wrap: break-word; /* Tương thích tốt hơn với word-break */
+    }
+
+    /* Màu nền tiêu đề bảng */
+    th {
+        background: var(--blue);
+        color: #fff;
+        font-weight: 600;
+    }
+
+    /* Độ rộng cột cho số thứ tự và căn giữa */
+    .w-idx { width: 60px; text-align: center; } /* Tăng độ rộng để chứa icon số khoanh tròn */
+    .w-crit { width: 30%; } /* Điều chỉnh % để linh hoạt hơn */
+    .w-rate { width: 120px; text-align: center; }
+    .w-luan-cu { width: auto; } /* Để cột luận cứ tự động co giãn */
+
+    /* Màu sao đánh giá */
+    .star {
+        font-size: 1.3em;
+        color: #ccc;
+        cursor: pointer;
+        transition: color 0.1s ease-in-out;
+        margin: 0 1px;
+    }
+    .star.sel { color: #f1c40f; }
+
+    /* Icon kết quả tốt/trung bình/xấu */
+    .icon-good { color: var(--cat); }
+    .icon-avg { color: var(--trungbinh); }
+    .icon-bad { color: var(--xau); }
+
+    /* Khu vực hiển thị quẻ */
+    .que-area {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap; /* Cho phép xuống dòng trên màn hình nhỏ */
+        margin-top: 18px;
+    }
+
+    /* Hộp chứa quẻ */
+    .que-box {
+        flex: 1 1 320px; /* Đảm bảo kích thước tối thiểu và tự co giãn */
+        background: #f8f8f8;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        padding: 15px;
+        overflow-y: auto;
+        max-height: 280px; /* Tăng chiều cao tối đa một chút nếu cần */
+        min-width: 280px; /* Đảm bảo không quá nhỏ trên màn hình di động */
+    }
+
+    /* Tiêu đề quẻ */
+    .que-title {
+        text-align: center;
+        font-weight: 700;
+        color: var(--blue);
+        margin-bottom: 10px;
+        font-size: 1.1em;
+    }
+
+    /* Dòng hào trong quẻ */
+    .hao-line {
+        display: flex;
+        align-items: center;
+        margin: 6px 0;
+        height: 26px; /* Giữ nguyên chiều cao hào */
+    }
+
+    /* Vùng hiển thị hình ảnh hào */
+    .que-line-visual {
+        width: 80px;
+        flex-shrink: 0; /* Ngăn co lại */
+    }
+
+    /* Hào Dương (vạch liền) */
+    .line-yang {
+        width: 100%;
+        height: 7px;
+        background: #333;
+        border-radius: 4px;
+    }
+
+    /* Hào Âm (vạch đứt) */
+    .line-yin {
+        display: flex;
+        justify-content: space-between;
+    }
+    .line-yin > div {
+        background: #333;
+        width: 45%;
+        height: 7px;
+        border-radius: 4px;
+    }
+
+    /* Lớp cho hào động (đánh dấu màu đỏ) */
+    .hl-bar { background: var(--xau) !important; }
+
+    /* Màu chữ cho hào động */
+    .hl-text .hao-text-val { color: var(--xau); font-weight: 700; }
+
+    /* Thông tin hào */
+    .hao-info {
+        font-size: .9em;
+        margin-left: 15px;
+        white-space: nowrap; /* Ngăn xuống dòng */
+        color: #555;
+        flex-grow: 1; /* Cho phép chiếm hết không gian còn lại */
+    }
+
+    /* Nhãn Thế/Ứng */
+    .the-ung-label {
+        font-weight: bold;
+        color: #fff;
+        background: #2c3e50;
+        padding: 2px 8px;
+        border-radius: 4px;
+        margin-left: 12px;
+        font-size: 0.8em;
+        vertical-align: middle; /* Căn giữa theo chiều dọc */
+    }
+
+    /* Màn hình tải ứng dụng */
+    #app-loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 99;
+        font-size: 1.2em;
+        color: var(--blue);
+        flex-direction: column; /* Đảm bảo text và spinner (nếu có) nằm dọc */
+        gap: 10px; /* Khoảng cách giữa các phần tử loading */
+    }
+
+    /* Nút hành động (chung cho các tab) */
+    .action-buttons {
+        display: flex;
+        flex-wrap: wrap; /* Cho phép các nút xuống dòng nếu màn hình hẹp */
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    /* Responsive cho màn hình nhỏ hơn 900px */
+    @media(max-width: 900px) {
+        .grid-narrow { grid-template-columns: 1fr; }
+        .form { order: 2; } /* Đẩy form xuống dưới trên di động */
+        .que-box { flex: 1 1 100%; max-height: 200px; } /* Đảm bảo quẻ chiếm toàn bộ chiều rộng */
+        body { padding: 10px; } /* Giảm padding tổng thể */
+        .wrap { padding: 15px; } /* Giảm padding wrap */
+        .tabs button {
+            flex: none; /* Bỏ flex:1 để mỗi nút có chiều rộng tự nhiên */
+            width: auto;
+            padding: 10px 12px; /* Điều chỉnh padding cho phù hợp */
+            font-size: 0.95em;
+        }
+        th, td { padding: 8px; } /* Giảm padding bảng */
+    }
+
+    /* CSS MỚI CHO TAB 3 */
+    /* Khu vực điều khiển Tab 3 */
+    .tab3-controls {
+        margin-bottom: 20px;
+        padding: 15px;
+        background: #e9ecef;
+        border-radius: 8px;
+    }
+    .tab3-controls h4 {
+        margin-top: 0;
+        color: #34495e;
+        border-bottom: 1px solid #ccd;
+        padding-bottom: 10px;
+        margin-bottom: 15px;
+    }
+    /* Lưới cho các tùy chọn bộ lọc */
+    .filter-options {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); /* Giảm minwidth 1 chút */
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+    /* Từng mục trong bộ lọc */
+    .filter-item {
+        display: flex;
+        align-items: center;
+        background-color: #f5f5f5;
+        padding: 8px 12px;
+        border-radius: 5px;
+        border: 1px solid #e0e0e0;
+        transition: background-color 0.2s ease;
+    }
+    .filter-item:hover {
+        background-color: #e8e8e8;
+    }
+    .filter-item input[type="checkbox"] {
+        margin-right: 10px;
+        width: auto;
+        transform: scale(1.2); /* Phóng to checkbox một chút */
+        cursor: pointer;
+    }
+    .filter-item label {
+        margin-bottom: 0;
+        cursor: pointer;
+        flex-grow: 1; /* Cho phép label chiếm hết không gian */
+    }
+
+    /* Nút hành động cho bộ lọc */
+    .filter-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+    }
+    /* Bảng xem trước báo cáo */
+    .report-preview-table th, .report-preview-table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+    .report-preview-table th {
+        background-color: #f2f2f2;
+        color: #333; /* Đổi màu chữ cho dễ nhìn hơn */
+    }
+    .report-preview-table .w-idx { width: 60px; text-align: center; } /* Đồng bộ với w-idx chung */
+    .report-preview-table .w-crit { width: 30%; }
+    .report-preview-table .w-rate { width: 120px; text-align: center; }
+
+    /* Điều chỉnh cho số thứ tự và căn chỉnh văn bản */
+    .report-preview-table .tieu-chi-col {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    .report-preview-table .tieu-chi-num {
+        font-size: 1.5em;
+        line-height: 1;
+        flex-shrink: 0;
+        padding-right: 5px;
+        white-space: nowrap;
+        width: 2.8em;
+        min-width: 2.8em;
+        text-align: center;
+        color: var(--blue);
+        font-weight: 600;
+        background-color: #eaf3ff; /* Nền nhẹ cho số */
+        border-radius: 5px;
+        padding: 3px 0;
+    }
+    .report-preview-table .tieu-chi-text {
+        flex-grow: 1;
+        padding-left: 0;
+        text-indent: 0;
+    }
+    .report-preview-table textarea { /* Đổi từ input[type="text"] sang textarea */
+        width: 100%;
+        box-sizing: border-box;
+        min-height: 60px; /* Chiều cao tối thiểu cho textarea */
+        resize: vertical; /* Chỉ cho phép kéo giãn chiều dọc */
+        padding: 8px;
+        border: 1px solid #cdd4da;
+        border-radius: 6px;
+        font-size: 0.95em;
+        line-height: 1.5;
+    }
+
+    /* CSS cho Rating Stars */
+    .rating-stars {
+        display: inline-flex;
+        align-items: center;
+        cursor: pointer;
+        user-select: none;
+        height: 1.3em;
+        margin: auto; /* Căn giữa nhóm sao trong ô bảng */
+    }
+    .rating-stars .star {
+        font-size: 1.3em;
+        color: #ccc;
+        transition: color 0.1s ease-in-out;
+        margin: 0 1px;
+    }
+    .rating-stars .star.sel { color: #f1c40f; }
+
+    .rating-stars .star-zero {
+        font-size: 1.4em;
+        color: var(--xau);
+        margin-right: 5px;
+        cursor: pointer;
+        transition: color 0.1s ease-in-out;
+    }
+    .rating-stars .star-zero.sel {
+        color: var(--blue-dark); /* Đổi màu khi chọn 0 sao */
+    }
+
+
+    /* Print styles */
+    @media print {
+    body { background: #fff; padding: 0; margin: 0; font-size: 12px; }
+    .wrap { box-shadow: none; border-radius: 0; padding: 0; margin: 0; max-width: none; }
+    .tabs, .form, .action-buttons, .tab3-controls, #app-loader, .app-header { display: none !important; }
+    .tab { display: block !important; padding: 0 !important; }
+    #t3 .action-buttons { display: none !important; }
+
+    table { border-color: #000 !important; table-layout: fixed; }
+    th, td { border-color: #000 !important; padding: 6px 8px; word-wrap: break-word; overflow-wrap: break-word; }
+    th { background-color: #e0e0e0 !important; color: #000 !important; -webkit-print-color-adjust: exact; color-adjust: exact; }
+
+    /* Độ rộng cột cho bản in */
+    th:nth-child(1), td:nth-child(1) { width: 50px; text-align: center; }
+    th:nth-child(2), td:nth-child(2) { width: 180px; }
+    th:nth-child(3), td:nth-child(3) { width: 90px; text-align: center; }
+    th:nth-child(4), td:nth-child(4) { width: auto; }
+
+    .tieu-chi-num-print {
+        font-size: 1.2em;
+        line-height: 1;
+        display: inline-block;
+        margin-right: 3px;
+        color: #007bff;
+        font-weight: bold;
+        background-color: #eaf3ff;
+        border-radius: 3px;
+        padding: 1px 0;
+        min-width: 1.8em;
+        text-align: center;
+        -webkit-print-color-adjust: exact; color-adjust: exact;
+    }
+    .print-rating-stars {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 1.3em;
+        -webkit-print-color-adjust: exact; color-adjust: exact;
+    }
+    .print-rating-stars .star-zero-print {
+        font-size: 1.4em;
+        color: #c0392b;
+        -webkit-print-color-adjust: exact; color-adjust: exact;
+    }
+    .print-rating-stars .star-print {
+        font-size: 1.3em;
+        color: #f1c40f;
+        -webkit-print-color-adjust: exact; color-adjust: exact;
+    }
+    .print-rating-stars .star-empty-print {
+        font-size: 1.3em;
+        color: #ccc;
+        -webkit-print-color-adjust: exact; color-adjust: exact;
+    }
+
+    /* Các phần details/summary trong luận giải (style cho bản in) */
+    details.dropdown-item {
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 8px 12px;
+        margin-bottom: 10px;
+        background-color: #f9f9f9;
+        page-break-inside: avoid;
+    }
+    details.dropdown-item[open] {
+        background-color: #eef6ff;
+        border-color: #007bff;
+    }
+    details.dropdown-item summary {
+        font-weight: 600;
+        color: #333;
+        padding-left: 15px;
+        font-size: 0.9em;
+    }
+    details.dropdown-item summary::before {
+        content: '▶';
+        color: #666;
+        font-size: 0.8em;
+        left: 0;
+        top: 2px;
+        position: absolute;
+    }
+    details.dropdown-item .dropdown-content {
+        padding-top: 5px;
+        padding-left: 8px;
+        border-left: 1px solid #bbb;
+        color: #444;
+        font-size: 0.85em;
+    }
+
+    /* --- CẤU HÌNH FOOTER CHO TẤT CẢ CÁC TRANG IN (ĐÃ CẬP NHẬT) --- */
+    @page {
+        margin: 1cm; /* Giữ margin trang */
+        /* Đặt nội dung footer trực tiếp vào góc dưới bên trái của mỗi trang */
+        @bottom-left {
+            content: "Nguyễn Khoa - Chọn dãy số theo Kinh dịch, Bát tự, Thần số học phương đông, Năng lượng số";
+            font-size: 0.7em;
+            color: #555;
+            text-align: left; /* Căn lề trái */
+            /* Các thuộc tính này có thể không hoạt động trên mọi trình duyệt/hệ điều hành cho content trong @page */
+            -webkit-print-color-adjust: exact; 
+            color-adjust: exact;
+        }
+        /* Xóa tất cả các nội dung mặc định khác ở các góc để tránh xung đột */
+        @bottom-right { content: ""; } 
+        @top-right { content: ""; }
+        @top-left { content: ""; }
+    }
+
+    /* Đảm bảo không có phần tử .custom-print-footer trong HTML khi in để tránh trùng lặp */
+    .custom-print-footer {
+        display: none !important; 
+    }
+}
+
+</style>
+</head>
+<body>
+<div style="text-align:center; margin-top: 20px;">
+  <h1 style="color:#0056cc; font-size:32px; font-weight:bold; text-transform:uppercase; margin-bottom: 5px;">
+    CHỌN DÃY SỐ THEO KINH DỊCH & THẦN SỐ HỌC
+  </h1>
+  <p style="color:#0056cc; font-size:18px; font-weight:bold; margin-top: 0;">
+    Nguyễn Khoa
+  </p>
+</div>
+
+<div id="app-loader"><span>🔮 Đang nạp Dữ liệu...</span></div>
+
+<div class="wrap" id="main-content" style="display:none;">
+    <div class="tabs">
+        <button class="tab-btn active" data-tab="t1">1. Tổng Quan & Hình Quẻ</button>
+        <button class="tab-btn" data-tab="t2">2. Luận Giải Chi Tiết</button>
+        <button class="tab-btn" data-tab="t3">3. Tổng Hợp & Đánh Giá</button>
+    </div>
+       
+    
+
+    <div id="t1" class="tab" style="display:block;">
+        <div class="grid grid-narrow">
+            <div class="form">
+                <h3><label>📝 Thông tin gia chủ</label></h3>
+                <div><label for="phone">Số điện thoại:</label><input id="phone" type="text" value="0919134368" maxlength="12"></div>
+                <div><label for="year">Năm sinh (Dương lịch):</label><input id="year" type="number" value="1983"></div>
+                <div><label for="sex">Giới tính:</label><select id="sex"><option value="Nam">Nam</option><option value="Nữ">Nữ</option></select></div>
+                <div><label for="dung">Dụng thần:</label><input id="dung" type="text" value="Hỏa, Thổ"></div>
+                <button class="btn primary" onclick="run()">✨ Luận Giải ✨</button>
+                <button class="btn grey" onclick="location.reload()">🔄 Làm Mới</button>
+            </div>
+            <div>
+                <table id="tblSum"></table>
+                <div class="que-area">
+                    <div class="que-box"><p class="que-title" id="queGocTitle">🔮 Quẻ Gốc</p><div id="hexMain"></div></div>
+                    <div class="que-box"><p class="que-title" id="queBienTitle">🌀 Quẻ Biến</p><div id="hexChange"></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="t2" class="tab">
+        <table>
+            <thead><tr><th class="w-idx">#</th><th class="w-crit">Tiêu Chí Luận Giải</th><th>Kết Quả Phân Tích</th></tr></thead>
+            <tbody id="tblDetail"></tbody>
+        </table>
+    </div>
+
+    <div id="t3" class="tab">
+        <div class="tab3-controls">
+            <h4>Chọn các tiêu chí để hiển thị trong báo cáo:</h4>
+            <div id="filterOptions" class="filter-options">
+            </div>
+            <div class="filter-actions">
+                <button class="btn primary" onclick="selectAllCriteria()">Chọn tất cả</button>
+                <button class="btn grey" onclick="deselectAllCriteria()">Bỏ chọn tất cả</button>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn primary" onclick="exportToGoogleSheet()">📄 Xuất sang Google Sheet</button>
+            <button class="btn grey" onclick="exportToPDF()">📕 Xuất sang PDF</button>
+            <button class="btn primary" onclick="copyReportToClipboard()">📋 Copy Báo Cáo</button>
+            <button class="btn grey" onclick="printReport()">🖨️ In Báo Cáo</button>
+        </div>
+
+        <h4>Báo cáo xem trước:</h4>
+        <div id="reportPreview">
+            <table class="report-preview-table">
+                <thead><tr><th class="w-idx">#</th><th class="w-crit">Tiêu Chí</th><th class="w-rate">Chấm Điểm</th><th>Luận Cứ (có thể sửa)</th></tr></thead>
+                <tbody id="tblFinal">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+// --- KHAI BÁO BIẾN TOÀN CỤC ---
+let ALL_DATA = {}; // Biến toàn cục để lưu trữ tất cả dữ liệu phong thủy từ backend
+let ALL_QUE_INFO = {}; // Biến toàn cục để lưu thông tin chi tiết của Quẻ Gốc và Quẻ Biến
+let FINAL_RESULTS = []; // Mảng chứa kết quả luận giải cuối cùng cho báo cáo
+let selectedCriteria = {}; // Đối tượng lưu trữ trạng thái chọn/bỏ chọn các tiêu chí trong Tab 3
+
+// Mảng định nghĩa danh sách các tiêu chí luận giải
+const TIEU_CHI_LIST = [
+    "Dãy số quẻ dịch gốc và ý nghĩa", // Tiêu chí 1
+    "Dãy số quẻ dịch biến và ý nghĩa", // Tiêu chí 2
+    "Hào Thế", // Tiêu chí 3
+    "Hào Động", // Tiêu chí 4
+    "Quẻ Thượng so với Cung Phi", // Tiêu chí 5
+    "Quẻ Hạ so với Cung Phi", // Tiêu chí 6
+    "Ngũ hành dãy số so với cung phi", // Tiêu chí 7
+    "Quẻ gốc phối Cung Phi (Du Niên)", // Tiêu chí 8
+    "Quẻ thượng so với Dụng thần", // Tiêu chí 9
+    "Quẻ hạ so với Dụng thần", // Tiêu chí 10
+    "2 số cuối tạo thành quẻ dịch", // Tiêu chí 11
+    "Các cặp số hành trình", // Tiêu chí 12
+    "Cân bằng âm dương", // Tiêu chí 13
+    "Dãy số theo đương vận", // Tiêu chí 14
+    "Các cặp cát hung theo thần số & năng lượng", // Tiêu chí 15
+    "Tổ hợp đặc biệt 3 số cuối", // Tiêu chí 16
+    "Các tổ hợp số đặc biệt", // Tiêu chí 17
+    "Ghi chú", // Tiêu chí 18 ( sửa thành ghi chú)
+];
+
+// Mảng chứa các ký tự số khoanh tròn Unicode để hiển thị số thứ tự đẹp hơn
+const NUMBER_CIRCLED = ['⓪', '①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨', '⑩', '⑪', '⑫', '⑬', '⑭', '⑮', '⑯', '⑰', '⑱', '⑲', '⑳'];
+
+/**
+ * @function getCircledNumber
+ * @description Chuyển đổi số nguyên thành ký tự số khoanh tròn Unicode.
+ */
+function getCircledNumber(num) {
+    if (num >= 0 && num < NUMBER_CIRCLED.length) {
+        return NUMBER_CIRCLED[num];
+    }
+    return num.toString();
+}
+
+// Định nghĩa mã nhị phân cho các quẻ đơn
+const bin = {"1":"111", "2":"011", "3":"101", "4":"001", "5":"110", "6":"010", "7":"100", "8":"000"};
+// Mảng 10 Thiên Can
+const stems = ['Giáp', 'Ất', 'Bính', 'Đinh', 'Mậu', 'Kỷ', 'Canh', 'Tân', 'Nhâm', 'Quý'];
+// Mảng 12 Địa Chi
+const branches = ['Tý', 'Sửu', 'Dần', 'Mão', 'Thìn', 'Tỵ', 'Ngọ', 'Mùi', 'Thân', 'Dậu', 'Tuất', 'Hợi'];
+// Ánh xạ Cung Phi với Ngũ hành
+const cungPhiNguHanhMap = { 'Càn':'Kim', 'Đoài':'Kim', 'Khảm':'Thủy', 'Ly':'Hỏa', 'Chấn':'Mộc', 'Tốn':'Mộc', 'Cấn':'Thổ', 'Khôn':'Thổ' };
+// Ánh xạ số quẻ Hậu Thiên với tên quẻ
+const soQueHauThienMap = {1:'Khảm', 2:'Khôn', 3:'Chấn', 4:'Tốn', 6:'Càn', 7:'Đoài', 8:'Cấn', 9:'Ly'};
+// Ánh xạ quẻ Tiên Thiên với tên quẻ và ngũ hành
+const tienThienMap = { 1: { ten: 'Càn', hanh: 'Kim' }, 2: { ten: 'Đoài', hanh: 'Kim' }, 3: { ten: 'Ly', hanh: 'Hỏa' }, 4: { ten: 'Chấn', hanh: 'Mộc' }, 5: { ten: 'Tốn', hanh: 'Mộc' }, 6: { ten: 'Khảm', hanh: 'Thủy' }, 7: { ten: 'Cấn', hanh: 'Thổ' }, 8: { ten: 'Khôn', hanh: 'Thổ' } };
+// Quan hệ tương sinh, tương khắc của Ngũ hành
+const nguHanhRelations = { 'Kim': { sinh: 'Thủy', khac: 'Mộc' }, 'Thủy': { sinh: 'Mộc', khac: 'Hỏa' }, 'Mộc': { sinh: 'Hỏa', khac: 'Thổ' }, 'Hỏa': { sinh: 'Thổ', khac: 'Kim' }, 'Thổ': { sinh: 'Kim', khac: 'Thủy' } };
+
+// --- CÁC HÀM TIỆN ÍCH ---
+
+// HÀM normalizeName ĐÃ ĐƯỢC DÁN LẠI ĐỂ KHẮC PHỤC LỖI
+function normalizeName(name) {
+  if (!name) return '';
+  const trimmedLower = name.toString().trim().toLowerCase();
+  const nameMap = {
+    'càn': 'Càn', 'can': 'Càn', 'thiên': 'Càn',
+    'đoài': 'Đoài', 'doai': 'Đoài', 'trạch': 'Đoài',
+    'ly': 'Ly', 'hỏa': 'Ly',
+    'chấn': 'Chấn', 'chan': 'Chấn', 'lôi': 'Chấn',
+    'tốn': 'Tốn', 'ton': 'Tốn', 'phong': 'Tốn',
+    'khảm': 'Khảm', 'kham': 'Khảm', 'thủy': 'Khảm',
+    'cấn': 'Cấn', 'son': 'Cấn', 'sơn': 'Cấn',
+    'khôn': 'Khôn', 'khon': 'Khôn', 'địa': 'Khôn'
+  };
+  return nameMap[trimmedLower] || name.toString().trim();
+}
+
+/**
+ * @function sumMod
+ * @description Tính tổng các phần tử trong mảng và lấy số dư theo modulo m.
+ */
+function sumMod(arr, m) { return arr.reduce((a, b) => a + b, 0) % m || m; }
+
+/**
+ * @function canChi
+ * @description Chuyển đổi năm dương lịch sang Thiên Can Địa Chi.
+ */
+function canChi(y) { return `${stems[(y-4)%10]} ${branches[(y-4)%12]}`; }
+
+/**
+ * @function CUNG_PHI
+ * @description Tính Cung Phi dựa trên năm sinh dương lịch và giới tính.
+ */
+function CUNG_PHI(year, sex) {
+    let sum = (year % 100).toString().split('').reduce((a, b) => a + +b, 0);
+    while (sum > 9) sum = sum.toString().split('').reduce((a, b) => a + +b, 0);
+    let num = sex === 'Nam' ? 10 - sum : 5 + sum;
+    while (num > 9) num = num.toString().split('').reduce((a, b) => a + +b, 0);
+    if (num === 5) num = sex === 'Nam' ? 2 : 8; // Quy tắc đặc biệt cho số 5
+    return soQueHauThienMap[num] || '?';
+}
+
+/**
+ * @function short
+ * @description Cắt chuỗi tại dấu chấm hoặc dấu phẩy để lấy phần đầu.
+ */
+function short(t) { return t ? t.split(/[.，]/)[0] : ''; }
+
+/**
+ * @function createExpandableSection
+ * @description Tạo một phần có thể mở rộng/thu gọn (details/summary) để hiển thị thông tin chi tiết.
+ */
+function createExpandableSection(summaryText, detailContent) {
+    if (!detailContent || detailContent.trim() === '') {
+        return summaryText; // Nếu không có nội dung chi tiết, chỉ hiển thị tóm tắt
+    }
+    const formattedDetailContent = detailContent.replace(/\n/g, '<br>');
+    return `
+        <details class="dropdown-item">
+            <summary>${summaryText}</summary>
+            <div class="dropdown-content">${formattedDetailContent}</div>
+        </details>
+    `;
+}
+
+/**
+ * @function soSanhNguHanh
+ * @description So sánh mối quan hệ Ngũ hành giữa hai yếu tố (tương sinh, tương khắc, tỷ hòa).
+ */
+function soSanhNguHanh(tenNguon, hanhNguon, tenDich, hanhDich) {
+    const relations = nguHanhRelations;
+    if (!hanhNguon || !hanhDich) return { ket_qua: "Trung bình", luan_giai: `Không xác định được Ngũ hành.` };
+
+    if (hanhNguon === hanhDich) return { ket_qua: "Trung bình", luan_giai: `${tenNguon} <b>(${hanhNguon})</b> so với ${tenDich} <b>(${hanhDich})</b> là Tỷ hòa (bình thường).` };
+    if (relations[hanhNguon]?.sinh === hanhDich) return { ket_qua: "Tốt", luan_giai: `${tenNguon} <b>(${hanhNguon})</b> Tương Sinh cho ${tenDich} <b>(${hanhDich})</b>. Rất tốt.` };
+    if (relations[hanhNguon]?.khac === hanhDich) return { ket_qua: "Xấu", luan_giai: `${tenNguon} <b>(${hanhNguon})</b> Tương Khắc ${tenDich} <b>(${hanhDich})</b>. Rất xấu.` };
+    if (relations[hanhDich]?.sinh === hanhNguon) return { ket_qua: "Trung bình", luan_giai: `${tenNguon} <b>(${hanhNguon})</b> làm ${tenDich} <b>(${hanhDich})</b> bị Sinh Xuất. Bình thường.` };
+    if (relations[hanhDich]?.khac === hanhNguon) return { ket_qua: "Tốt", luan_giai: `${tenDich} <b>(${hanhDich})</b> khắc được ${tenNguon} <b>(${hanhNguon})</b>. Tốt.` };
+    return { ket_qua: "Trung bình", luan_giai: "Không xác định mối quan hệ Ngũ hành." };
+}
+
+/**
+ * @function luanAmDuong
+ * @description Luận giải sự cân bằng Âm Dương của dãy số điện thoại so với năm sinh.
+ */
+function luanAmDuong(sdt, namSinh) {
+    const isNamDuong = parseInt(namSinh) % 2 === 0;
+    const tuoiAmDuongText = isNamDuong ? 'Dương' : 'Âm';
+    let soDuong = 0; // Số lẻ
+    let soAm = 0; // Số chẵn
+    for (const digit of sdt) {
+        if (!isNaN(parseInt(digit))) { // Đảm bảo là số
+            if (parseInt(digit) % 2 === 0) soAm++;
+            else soDuong++;
+        }
+    }
+
+    if (soDuong === soAm) {
+        return { ket_qua: "Tốt", luan_giai: `Dãy số có ${soDuong} số Dương (lẻ) và ${soAm} số Âm (chẵn). Âm Dương cân bằng hoàn hảo. Rất tốt.` };
+    }
+
+    let ketLuan = `Dãy số có ${soDuong} số Dương và ${soAm} số Âm. Tuổi của sếp là tuổi <b>${tuoiAmDuongText}</b>, `;
+    let ketQua = "Xấu";
+
+    if (isNamDuong) { // Tuổi Dương (cần Âm để cân bằng)
+        ketLuan += `cần nhiều số Âm (chẵn) hơn để cân bằng.`;
+        if (soAm > soDuong) {
+            ketQua = "Tốt";
+            ketLuan += ` Dãy số này nghiêng về Âm, rất tốt.`;
+        } else {
+            ketLuan += ` Dãy số này lại nghiêng về Dương, chưa tốt.`;
+        }
+    } else { // Tuổi Âm (cần Dương để cân bằng)
+        ketLuan += `cần nhiều số Dương (lẻ) hơn để cân bằng.`;
+        if (soDuong > soAm) {
+            ketQua = "Tốt";
+            ketLuan += ` Dãy số này nghiêng về Dương, rất tốt.`;
+        } else {
+            ketLuan += ` Dãy số này lại nghiêng về Âm, chưa tốt.`;
+        }
+    }
+    return { ket_qua: ketQua, luan_giai: ketLuan };
+}
+
+/**
+ * @function luanDuongVan
+ * @description Luận giải dãy số theo quan niệm số cát/hung (tốt/xấu) dựa trên các số đơn lẻ.
+ */
+function luanDuongVan(sdt) {
+    const soCat = ['1', '6', '8', '9']; // Các số được coi là Cát
+    let demCat = 0;
+    let demHung = 0;
+    for (const digit of sdt) {
+        if (isNaN(parseInt(digit))) continue; // Bỏ qua nếu không phải số
+        if (soCat.includes(digit)) demCat++;
+        else demHung++;
+    }
+    const luanGiai = `Dãy số có <b>${demCat}</b> số Cát (1, 6, 8, 9) và <b>${demHung}</b> số Hung (0, 2, 3, 4, 5, 7).`;
+    const ketQua = demCat > demHung ? "Tốt" : (demHung > demCat ? "Xấu" : "Trung bình");
+    return { ket_qua: ketQua, luan_giai: luanGiai };
+}
+
+/**
+ * @function nguHanhDay_JS
+ * @description Tính Ngũ hành của một dãy số theo công thức đặc biệt.
+ */
+function nguHanhDay_JS(day_so) {
+    if (!day_so) return null;
+    const s = day_so.toString().replace(/\D/g, ''); // Chỉ giữ lại số
+    if (s.length === 0) return null;
+
+    let tong_rut_gon = [...s].reduce((sum, digit) => sum + parseInt(digit, 10), 0);
+    while (tong_rut_gon > 9) {
+        tong_rut_gon = [...tong_rut_gon.toString()].reduce((sum, digit) => sum + parseInt(digit, 10), 0);
+    }
+
+    let so_cung = 11 - tong_rut_gon;
+    if (so_cung >= 10) { // Nếu lớn hơn hoặc bằng 10, tiếp tục rút gọn (vd: 10 -> 1)
+        so_cung = [...so_cung.toString()].reduce((sum, digit) => sum + parseInt(digit, 10), 0);
+    }
+
+    // Bảng tra Hậu Thiên Bát Quái
+    const soQueHauThienMapLocal = {1:'Khảm', 2:'Khôn', 3:'Chấn', 4:'Tốn', 5:'Thổ', 6:'Càn', 7:'Đoài', 8:'Cấn', 9:'Ly'};
+    return cungPhiNguHanhMap[soQueHauThienMapLocal[so_cung]] || null;
+}
+
+/**
+ * @function luanThanSo
+ * @description Luận giải các cặp số trong dãy số theo Thần Số học và năng lượng Bát Tinh.
+ */
+function luanThanSo(sdt, mapNangLuong) {
+    const ketQuaPhanTich = [];
+    let demCat = 0;
+    let demHung = 0;
+
+    for (let i = 0; i < sdt.length - 1; i++) {
+        const capSo = sdt.substring(i, i + 2);
+        // Ưu tiên tra cứu cặp số xuôi, nếu không có thì tra cứu cặp số đảo ngược
+        const nangLuong = mapNangLuong[capSo] || mapNangLuong[capSo.split('').reverse().join('')];
+
+        if (nangLuong) {
+            ketQuaPhanTich.push({ cap: capSo, ...nangLuong });
+            if (nangLuong.loai === 'Tốt') demCat++;
+            else demHung++;
+        }
+    }
+
+    if (ketQuaPhanTich.length === 0) {
+        return { ket_qua: "Trung bình", luan_giai: "Không có cặp năng lượng nào được xác định."};
+    }
+
+    const ketQuaTong = demCat > demHung ? 'Tốt' : (demHung > demCat ? 'Xấu' : 'Trung bình');
+    let html = `<p><b>Tổng quan:</b> Dãy số có ${demCat} cặp năng lượng Cát và ${demHung} cặp năng lượng Hung. Tổng thể nghiêng về <b>${ketQuaTong}</b>.</p>`;
+
+    html += `<div style="margin-top: 15px;">`;
+    ketQuaPhanTich.forEach(item => {
+        const icon = item.loai === 'Tốt' ? '⭐'.repeat(item.manh) : '❌'.repeat(item.manh);
+        const iconClass = item.loai === 'Tốt' ? 'icon-good' : 'icon-bad';
+        const summaryText = `Cặp <b>${item.cap}</b>: ${item.ten} (${item.manh} sao ${item.loai}) ${icon} >> ${item.y_nghia_van_tat}`;
+        const detailContent = item.y_nghia_chi_tiet;
+
+        html += createExpandableSection(summaryText, detailContent);
+    });
+    html += `</div>`;
+
+    return { ket_qua: ketQuaTong, luan_giai: html };
+}
+
+/**
+ * @function capKhongLap_JS
+ * @description Lấy 3 số cuối của dãy số, xử lý trường hợp các số cuối lặp lại.
+ */
+function capKhongLap_JS(s) {
+    if (!s) return "";
+    const str = s.toString().replace(/\D/g, ''); // Chỉ giữ lại số
+    const len = str.length;
+    if (len < 3) return str; // Nếu ít hơn 3 ký tự thì trả về nguyên bản
+
+    let lastThree = str.slice(-3);
+    // Kiểm tra xem 3 ký tự cuối có phải là 3 ký tự giống nhau không (ví dụ: "888")
+    if (lastThree[0] === lastThree[1] && lastThree[1] === lastThree[2]) {
+        // Nếu có, lấy 3 ký tự trước đó
+        if (len >= 6) { // Nếu độ dài đủ 6 ký tự trở lên để lấy 3 số trước đó
+             return str.slice(-6, -3); // Lấy 3 số từ vị trí -6 đến -3 (trước 3 số cuối lặp)
+        } else if (len >= 3) { // Nếu không đủ 6, nhưng đủ 3, thì vẫn là 3 số cuối
+            return str.slice(0,3); // Lấy 3 số đầu tiên
+        }
+    }
+    return lastThree; // Trả về 3 số cuối bình thường
+}
+
+/**
+ * @function luanToHopDacBiet
+ * @description Trích xuất các bộ 3 ký tự liên tiếp từ cuối dãy số về đầu, loại bỏ bộ bắt đầu bằng '0', và trả về các key duy nhất.
+ */
+function luanToHopDacBiet(sdt, mapToHop) {
+    const extractedCombos = new Set();
+    const cleanedSdt = sdt.replace(/[^0-9]/g, '');
+
+    if (cleanedSdt.length < 3) {
+        return [];
+    }
+
+    // Trích xuất các bộ 3 ký tự từ cuối dãy về đầu dãy
+    for (let i = cleanedSdt.length - 3; i >= 0; i--) {
+        const combo = cleanedSdt.substring(i, i + 3);
+        if (combo[0] !== '0') { // Kiểm tra nếu bộ 3 này không bắt đầu bằng '0'
+            if (mapToHop.hasOwnProperty(combo)) {
+                extractedCombos.add(combo);
+            }
+        }
+    }
+
+    // Chuyển Set thành mảng, và sắp xếp lại theo thứ tự xuất hiện trong sdt gốc
+    const sortedCombos = Array.from(extractedCombos).sort((a, b) => {
+        const indexA = cleanedSdt.indexOf(a);
+        const indexB = cleanedSdt.indexOf(b);
+        return indexA - indexB;
+    });
+
+    return sortedCombos;
+}
+
+// --- CÁC HÀM HIỂN THỊ ---
+/**
+ * @function veQue
+ * @description Vẽ hình ảnh quẻ (hào liền/đứt) và hiển thị thông tin chi tiết của từng hào.
+ */
+function veQue(mahoa, haoDong, isBienQue, linesDetail, theHao, ungHao) {
+    let html = "";
+    for (let i = 0; i < 6; i++) {
+        const bit = mahoa[i];
+        const currentHao = 6 - i; // Hào từ 6 xuống 1
+        const isHaoDong = currentHao === haoDong;
+        const barClass = isHaoDong ? ' hl-bar' : '';
+
+        const lineVisualHTML = bit === '1' ?
+            `<div class="line-yang ${barClass}"></div>` :
+            `<div class="line-yin"><div class="${barClass}"></div><div class="${barClass}"></div></div>`;
+
+        let theUngLabel = "";
+        if (!isBienQue) { // Chỉ hiển thị Thế/Ứng cho quẻ gốc
+            if (currentHao === parseInt(theHao, 10)) {
+                theUngLabel = `<span class="the-ung-label">Thế</span>`;
+            } else if (currentHao === parseInt(ungHao, 10)) {
+                theUngLabel = `<span class="the-ung-label">Ứng</span>`;
+            }
+        }
+
+        // Đảm bảo linesDetail[i] tồn tại trước khi truy cập
+        const haoDetailText = linesDetail && linesDetail[i] ? linesDetail[i] : "";
+
+        html += `
+            <div class="hao-line">
+                <div class="que-line-visual">${lineVisualHTML}</div>
+                <div class="hao-info ${isHaoDong ? 'hl-text' : ''}">
+                    <span class="hao-text-val">Hào ${currentHao}: ${haoDetailText}</span>
+                    ${theUngLabel}
+                </div>
+            </div>
+        `;
+    }
+    return html;
+}
+
+/**
+ * @function buildSum
+ * @description Hiển thị thông tin tổng quan của gia chủ và kết quả quẻ trên Tab 1.
+ */
+function buildSum(o) {
+    document.getElementById('tblSum').innerHTML = `
+        <tbody>
+            ${Object.entries(o).map(([k, v]) => `
+                <tr>
+                    <td style="width:140px;"><b>${k}</b></td>
+                    <td>${v}</td>
+                </tr>
+            `).join('')}
+        </tbody>
+    `;
+}
+
+/**
+ * @function buildDetail
+ * @description Xây dựng và hiển thị bảng chi tiết luận giải trên Tab 2.
+ */
+function buildDetail(data) {
+    const tbody = document.getElementById('tblDetail');
+    tbody.innerHTML = data.map((item, index) => {
+        let icon = item.ket_qua === 'Tốt' ? '✅' : (item.ket_qua === 'Xấu' ? '❌' : '🔶');
+        let iconClass = item.ket_qua === 'Tốt' ? 'icon-good' : (item.ket_qua === 'Xấu' ? 'icon-bad' : 'icon-avg');
+        // Sử dụng createExpandableSection để bọc nội dung luận giải
+        return `
+            <tr>
+                <td class="w-idx">${index + 1}</td>
+                <td><b>${item.tieu_chi}</b></td>
+                <td><span class="${iconClass}" style="font-size: 1.2em;">${icon}</span> ${item.luan_giai}</td>
+            </tr>
+        `;
+    }).join('');
+}
+
+/**
+ * @function updateRating
+ * @description Cập nhật điểm chấm của một tiêu chí cụ thể trong báo cáo cuối cùng (Tab 3).
+ */
+function updateRating(index, rating) {
+    // Lọc ra các kết quả đang được hiển thị trên Tab 3
+    const filteredResults = FINAL_RESULTS.filter(
+        item => selectedCriteria && selectedCriteria[item.tieu_chi]
+    );
+    if (!filteredResults || index >= filteredResults.length) return;
+
+    // Tìm tiêu chí gốc trong FINAL_RESULTS (không bị lọc)
+    const tieuChiToUpdate = filteredResults[index].tieu_chi;
+    const originalItemIndex = FINAL_RESULTS.findIndex(
+        item => item.tieu_chi === tieuChiToUpdate
+    );
+
+    if (originalItemIndex !== -1) {
+        FINAL_RESULTS[originalItemIndex].cham_diem = rating;
+    }
+    renderTab3Report(); // Render lại để cập nhật giao diện
+}
+
+/**
+ * @function updateLuanCu
+ * @description Cập nhật nội dung luận cứ cho một tiêu chí trong báo cáo cuối cùng (Tab 3).
+ */
+function updateLuanCu(index, text) {
+    const filteredResults = FINAL_RESULTS.filter(item => selectedCriteria?.[item.tieu_chi]);
+    const itemToUpdate = filteredResults?.[index];
+    if (itemToUpdate) {
+        const originalIndex = FINAL_RESULTS.findIndex(item => item.tieu_chi === itemToUpdate.tieu_chi);
+        if (originalIndex !== -1) {
+            FINAL_RESULTS[originalIndex].luan_cu = text;
+        }
+    }
+}
+
+
+// --- HÀM MỚI CHO TAB 3 ---
+/**
+ * @function renderTab3Filters
+ * @description Hiển thị các tùy chọn lọc tiêu chí trong Tab 3.
+ */
+function renderTab3Filters() {
+    const filterOptionsDiv = document.getElementById('filterOptions');
+    filterOptionsDiv.innerHTML = '';
+
+    // Đảm bảo tất cả các tiêu chí có sẵn trong FINAL_RESULTS đều có trong selectedCriteria mặc định là true
+    FINAL_RESULTS.forEach(item => {
+        if (selectedCriteria[item.tieu_chi] === undefined) {
+            selectedCriteria[item.tieu_chi] = true;
+        }
+    });
+
+    TIEU_CHI_LIST.forEach(tieuChiName => {
+        // Chỉ hiển thị checkbox cho các tiêu chí có kết quả trong FINAL_RESULTS
+        const hasResult = FINAL_RESULTS.some(item => item.tieu_chi === tieuChiName);
+        if (hasResult) {
+            const div = document.createElement('div');
+            div.className = 'filter-item';
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            // Tạo ID duy nhất, loại bỏ ký tự không hợp lệ
+            checkbox.id = `filter-${tieuChiName.replace(/\s/g, '_').replace(/[^a-zA-Z0-9_]/g, '')}`;
+            checkbox.checked = selectedCriteria[tieuChiName];
+            checkbox.onchange = () => {
+                selectedCriteria[tieuChiName] = checkbox.checked;
+                renderTab3Report(); // Render lại báo cáo khi thay đổi lọc
+            };
+            const label = document.createElement('label');
+            label.htmlFor = checkbox.id;
+            label.textContent = tieuChiName;
+            div.appendChild(checkbox);
+            div.appendChild(label);
+            filterOptionsDiv.appendChild(div);
+        }
+    });
+    renderTab3Report(); // Gọi để render báo cáo ban đầu sau khi tạo lọc
+}
+
+/**
+ * @function selectAllCriteria
+ * @description Chọn tất cả các tiêu chí lọc trong Tab 3.
+ */
+function selectAllCriteria() {
+    FINAL_RESULTS.forEach(item => {
+        selectedCriteria[item.tieu_chi] = true;
+    });
+    // Cập nhật trạng thái checkbox trên giao diện
+    TIEU_CHI_LIST.forEach(tieuChiName => {
+        const checkbox = document.getElementById(`filter-${tieuChiName.replace(/\s/g, '_').replace(/[^a-zA-Z0-9_]/g, '')}`);
+        if (checkbox) {
+            checkbox.checked = true;
+        }
+    });
+    renderTab3Report();
+}
+
+/**
+ * @function deselectAllCriteria
+ * @description Bỏ chọn tất cả các tiêu chí lọc trong Tab 3.
+ */
+function deselectAllCriteria() {
+    FINAL_RESULTS.forEach(item => {
+        selectedCriteria[item.tieu_chi] = false;
+    });
+    // Cập nhật trạng thái checkbox trên giao diện
+    TIEU_CHI_LIST.forEach(tieuChiName => {
+        const checkbox = document.getElementById(`filter-${tieuChiName.replace(/\s/g, '_').replace(/[^a-zA-Z0-9_]/g, '')}`);
+        if (checkbox) {
+            checkbox.checked = false;
+        }
+    });
+    renderTab3Report();
+}
+
+/**
+ * @function renderTab3Report
+ * @description Hiển thị báo cáo xem trước và cho phép chỉnh sửa trong Tab 3.
+ */
+function renderTab3Report() {
+    const tbody = document.getElementById('tblFinal');
+    // Lọc các kết quả dựa trên selectedCriteria
+    const filteredResults = FINAL_RESULTS.filter(item => selectedCriteria?.[item.tieu_chi]);
+
+    tbody.innerHTML = filteredResults.map((item, index) => {
+        // Loại bỏ các thẻ HTML để lấy văn bản thuần túy từ luận cứ
+        const luanCuText = typeof item.luan_cu === 'string' ? item.luan_cu.replace(/<[^>]*>?/gm, '') : '';
+        let ratingHtml = '';
+
+        // Nút cho 0 sao (biểu tượng 🚫)
+        ratingHtml += `<span class="star star-zero ${item.cham_diem === 0 ? 'sel' : ''}" data-rating="0" data-index="${index}">🚫</span>`;
+
+        // Tạo các ngôi sao từ 1 đến 5
+        for (let i = 1; i <= 5; i++) {
+            ratingHtml += `<span class="star ${item.cham_diem >= i && item.cham_diem !== 0 ? 'sel' : ''}" data-rating="${i}" data-index="${index}">★</span>`;
+        }
+
+        const displayIndex = getCircledNumber(index + 1) + '✅'; // Thêm icon check cho đẹp
+
+        return `
+            <tr>
+                <td class="w-idx"><span class="tieu-chi-num">${displayIndex}</span></td>
+                <td><span class="tieu-chi-text"><b>${item.tieu_chi}</b></span></td>
+                <td class="w-rate" style="text-align: center;">
+                    <div class="rating-stars">
+                        ${ratingHtml}
+                    </div>
+                </td>
+                <td><textarea rows="3" onchange="updateLuanCu(${index}, this.value)">${luanCuText}</textarea></td>
+            </tr>
+        `;
+    }).join('');
+
+    // Gắn lại sự kiện click cho các ngôi sao sau khi innerHTML được cập nhật
+    tbody.querySelectorAll('.rating-stars .star, .rating-stars .star-zero').forEach(element => {
+        element.addEventListener('click', function() {
+            const rating = parseInt(this.dataset.rating);
+            const index = parseInt(this.dataset.index);
+            updateRating(index, rating);
+        });
+    });
+
+    // Gắn lại sự kiện onchange cho textarea
+    tbody.querySelectorAll('textarea').forEach((textarea, idx) => {
+        textarea.onchange = (e) => {
+            const currentItemInFiltered = filteredResults?.[idx];
+            if (currentItemInFiltered) {
+                const originalIndexInFinalResults = FINAL_RESULTS.findIndex(item => item.tieu_chi === currentItemInFiltered.tieu_chi);
+                if (originalIndexInFinalResults !== -1) {
+                    FINAL_RESULTS[originalIndexInFinalResults].luan_cu = e.target.value;
+                }
+            }
+        };
+    });
+}
+
+/**
+ * @function exportToGoogleSheet
+ * @description Xuất dữ liệu báo cáo sang Google Sheet thông qua Apps Script.
+ */
+function exportToGoogleSheet() {
+    // Lấy thông tin tổng quan từ Tab 1
+    const sdtValue = document.getElementById('phone').value.replace(/\D/g, ''); // Đảm bảo chỉ lấy số
+    const yearValue = document.getElementById('year').value;
+    const sexValue = document.getElementById('sex').value;
+    const dungValue = document.getElementById('dung').value;
+    const cungPhiValue = CUNG_PHI(yearValue, sexValue);
+    const menhNapAmValue = ALL_DATA.napAm?.[canChi(yearValue)]?.name || 'Không rõ';
+
+    // Lấy thông tin Quẻ Gốc và Quẻ Biến từ biến ALL_QUE_INFO đã lưu khi chạy run()
+    const queGocText = ALL_QUE_INFO.G ? `${ALL_QUE_INFO.G.ten_que} – ${short(ALL_QUE_INFO.G.y_nghia)}` : 'N/A';
+    const haoDongText = `Hào ${ALL_QUE_INFO.hao_dong_num || 'N/A'}`;
+    const queBienText = ALL_QUE_INFO.B ? `${ALL_QUE_INFO.B.ten_que} – ${short(ALL_QUE_INFO.B.y_nghia)}` : 'N/A';
+
+    const infoData = {
+        'Số điện thoại': sdtValue,
+        'Năm sinh': `${yearValue} (${canChi(yearValue)})`,
+        'Giới tính': sexValue,
+        'Dụng thần': dungValue,
+        'Cung Phi': cungPhiValue,
+        'Mệnh (Nạp âm)': menhNapAmValue,
+        'Quẻ Gốc': queGocText,
+        'Hào động': haoDongText,
+        'Quẻ Biến': queBienText
+    };
+
+    const dataToSend = {
+        info: infoData,
+        details: FINAL_RESULTS.filter(item => selectedCriteria?.[item.tieu_chi]).map(item => ({
+            tieu_chi: item.tieu_chi,
+            cham_diem: item.cham_diem,
+            luan_cu: typeof item.luan_cu === 'string' ? item.luan_cu.replace(/<[^>]*>?/gm, '').trim() : '' // Loại bỏ HTML tag
+        }))
+    };
+
+    // Sếp DÁN URL ỨNG DỤNG WEB CỦA APPS SCRIPT VÀO ĐÂY
+    // Đây là URL của Apps Script backend (cái sếp đã triển khai dưới dạng ứng dụng web)
+    const SCRIPT_URL = 'YOUR_APPS_SCRIPT_WEB_APP_URL';
+
+    if (SCRIPT_URL === 'YOUR_APPS_SCRIPT_WEB_APP_URL' || SCRIPT_URL === '') {
+        alert('Vui lòng thiết lập URL Apps Script cho chức năng "Xuất sang Google Sheet"!');
+        return;
+    }
+
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dataToSend)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            alert('Dữ liệu đã được xuất sang Google Sheet thành công!');
+        } else {
+            alert('Có lỗi xảy ra khi xuất sang Google Sheet: ' + data.message);
+            console.error('Apps Script Error:', data.message);
+        }
+    })
+    .catch((error) => {
+        alert('Không thể kết nối đến Google Sheet. Vui lòng kiểm tra kết nối mạng và thiết lập Apps Script.');
+        console.error('Fetch Error:', error);
+    });
+}
+
+/**
+ * @function exportToPDF
+ * @description Chức năng xuất báo cáo sang định dạng PDF (hiện tại chuyển hướng sang in).
+ */
+function exportToPDF() {
+    alert('Chức năng "Xuất sang PDF" sẽ được phát triển sau!');
+    printReport(); // Tạm thời gọi hàm in báo cáo
+}
+
+/**
+ * @function copyReportToClipboard
+ * @description Copy toàn bộ nội dung báo cáo vào clipboard dưới dạng văn bản thuần túy.
+ */
+function copyReportToClipboard() {
+    // Lấy thông tin từ Tab 1
+    const sdtValue = document.getElementById('phone').value;
+    const yearValue = document.getElementById('year').value;
+    const sexValue = document.getElementById('sex').value;
+    const dungValue = document.getElementById('dung').value;
+    const cungPhiValue = CUNG_PHI(yearValue, sexValue);
+    const menhNapAmValue = ALL_DATA.napAm?.[canChi(yearValue)]?.name || 'Không rõ';
+
+    // Xây dựng nội dung văn bản thuần túy được căn chỉnh theo thụt lề
+    let textContent = `DÃY SỐ THEO KINH DỊCH VÀ THẦN SỐ HỌC\n\n`;
+    textContent += `Thông tin gia chủ:\n`;
+    textContent += `    Số điện thoại: ${sdtValue}\n`;
+    textContent += `    Năm sinh: ${yearValue} (${canChi(yearValue)}) - Giới tính: ${sexValue}\n`;
+    textContent += `    Dụng thần: ${dungValue} - Cung Phi: ${cungPhiValue} - Mệnh (Nạp âm): ${menhNapAmValue}\n\n`;
+
+    textContent += `Báo cáo chi tiết:\n`;
+
+    const filteredResults = FINAL_RESULTS.filter(item => selectedCriteria?.[item.tieu_chi]);
+    filteredResults.forEach((item, index) => {
+        const displayIndex = getCircledNumber(index + 1); // Chỉ lấy số khoanh tròn, không có ✅
+        const luanCuText = typeof item.luan_cu === 'string' ? item.luan_cu.replace(/<[^>]*>?/gm, '').trim() : '';
+
+        let scoreDisplay;
+        if (item.cham_diem === 0) {
+            scoreDisplay = '🚫';
+        } else {
+            scoreDisplay = '★'.repeat(item.cham_diem) + '☆'.repeat(5 - item.cham_diem);
+        }
+
+        const indent = '    '; // 4 khoảng trắng để thụt vào
+        textContent += `\n${indent}${displayIndex}✅ ${item.tieu_chi}:\n`;
+        textContent += `${indent}  Chấm Điểm: ${scoreDisplay}\n`;
+        textContent += `${indent}  Luận Cứ: ${luanCuText}\n`;
+    });
+
+    textContent += `\nNguyễn Khoa - Chọn dãy số theo Kinh dịch, Bát tự, Thần số học phương đông, Năng lượng số\n`;
+
+    // Sử dụng Clipboard API để copy
+    navigator.clipboard.writeText(textContent)
+        .then(() => {
+            alert('Đã copy báo cáo vào clipboard! Vui lòng dán vào Zalo/Facebook.');
+        })
+        .catch(err => {
+            console.error('Lỗi khi copy: ', err);
+            // Fallback cho trình duyệt cũ hoặc lỗi
+            const textarea = document.createElement('textarea');
+            textarea.value = textContent;
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                alert('Đã copy báo cáo vào clipboard (fallback)! Vui lòng chọn và copy thủ công:\n\n' + textContent);
+            } catch (execErr) {
+                alert('Không thể copy báo cáo tự động. Vui lòng chọn và copy thủ công:\n\n' + textContent);
+            }
+            document.body.removeChild(textarea);
+        });
+}
+
+/**
+ * @function printReport
+ * @description In báo cáo hiện tại.
+ */
+function printReport() {
+    // Lấy thông tin từ Tab 1
+    const sdtValue = document.getElementById('phone').value;
+    const yearValue = document.getElementById('year').value;
+    const sexValue = document.getElementById('sex').value;
+    const dungValue = document.getElementById('dung').value;
+    const cungPhiValue = CUNG_PHI(yearValue, sexValue);
+    const menhNapAmValue = ALL_DATA.napAm?.[canChi(yearValue)]?.name || 'Không rõ';
+
+    // Xây dựng toàn bộ nội dung HTML cho cửa sổ in
+    let printHtmlContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Dãy số theo kinh dịch và thần số học</title>
+            <meta charset="UTF-8">
+            <style>
+                /* CSS dành riêng cho bản in - Đã tối ưu hóa và giữ trong một khối */
+                @page { margin: 1cm; @bottom-right { content: ""; } @bottom-left { content: ""; } @top-right { content: ""; } @top-left { content: ""; } }
+                html, body { margin: 0; padding: 0; font-family: sans-serif; font-size: 14px; line-height: 1.5; color: #333; }
+                table { width: 100%; border-collapse: collapse; margin-bottom: 20px; table-layout: fixed; }
+                th, td { border: 1px solid #000; padding: 8px; text-align: left; vertical-align: top; word-wrap: break-word; overflow-wrap: break-word; }
+                th { background-color: #f2f2f2; }
+                h3, p { margin: 0; padding: 0; }
+                .custom-print-header { text-align: center; margin-bottom: 15px; }
+                .custom-print-footer { text-align: right; margin-top: 30px; font-style: italic; font-size: 0.9em; }
+
+                /* Độ rộng cột cho in ấn */
+                th:nth-child(1), td:nth-child(1) { width: 50px; text-align: center; } /* # */
+                th:nth-child(2), td:nth-child(2) { width: 180px; } /* Tiêu Chí */
+                th:nth-child(3), td:nth-child(3) { width: 90px; text-align: center; } /* Chấm Điểm */
+                th:nth-child(4), td:nth-child(4) { width: auto; } /* Luận Cứ */
+
+                .tieu-chi-num-print {
+                    font-size: 1.2em;
+                    line-height: 1;
+                    display: inline-block;
+                    margin-right: 3px;
+                    color: #007bff; /* Màu xanh cho số thứ tự khi in */
+                    font-weight: bold;
+                    background-color: #eaf3ff;
+                    border-radius: 3px;
+                    padding: 1px 0;
+                    min-width: 1.8em;
+                    text-align: center;
+                    -webkit-print-color-adjust: exact; color-adjust: exact;
+                }
+                .print-rating-stars {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    height: 1.3em;
+                    -webkit-print-color-adjust: exact; color-adjust: exact;
+                }
+                .print-rating-stars .star-zero-print {
+                    font-size: 1.4em;
+                    color: #c0392b;
+                    -webkit-print-color-adjust: exact; color-adjust: exact;
+                }
+                .print-rating-stars .star-print {
+                    font-size: 1.3em;
+                    color: #f1c40f;
+                    -webkit-print-color-adjust: exact; color-adjust: exact;
+                }
+                .print-rating-stars .star-empty-print {
+                    font-size: 1.3em;
+                    color: #ccc;
+                    -webkit-print-color-adjust: exact; color-adjust: exact;
+                }
+                details.dropdown-item {
+                    margin-bottom: 10px;
+                    border: 1px solid #ddd;
+                    border-radius: 6px;
+                    padding: 8px 12px;
+                    background-color: #f9f9f9;
+                    page-break-inside: avoid; /* Tránh ngắt trang giữa details */
+                }
+                details.dropdown-item[open] {
+                    background-color: #eef6ff;
+                    border-color: #007bff;
+                }
+                details.dropdown-item summary {
+                    cursor: pointer;
+                    font-weight: 600;
+                    color: #2c3e50;
+                    list-style: none; /* Ẩn dấu mũi tên mặc định */
+                    position: relative;
+                    padding-left: 20px;
+                }
+                details.dropdown-item summary::before {
+                    content: '▶';
+                    position: absolute;
+                    left: 0;
+                    top: 3px;
+                    font-size: 1em;
+                    color: #007bff;
+                    transition: transform 0.2s ease;
+                }
+                details.dropdown-item[open] summary::before {
+                    content: '▼';
+                }
+                details.dropdown-item .dropdown-content {
+                    padding-top: 8px;
+                    padding-left: 10px;
+                    border-left: 2px solid #007bff;
+                    color: #444;
+                    font-size: 0.95em;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="custom-print-header">
+                <h3>DÃY SÔ THEO KINH DỊCH VÀ THẦN SỐ HỌC</h3>
+                <p><strong>Số điện thoại:</strong> ${sdtValue}</p>
+                <p><strong>Năm sinh:</strong> ${yearValue} (${canChi(yearValue)}) - <strong>Giới tính:</strong> ${sexValue}</p>
+                <p><strong>Dụng thần:</strong> ${dungValue} - <strong>Cung Phi:</strong> ${cungPhiValue} - <strong>Mệnh (Nạp âm):</strong> ${menhNapAmValue}</p>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Tiêu Chí</th>
+                        <th>Chấm Điểm</th>
+                        <th>Luận Cứ</th>
+                    </tr>
+                </thead>
+                <tbody>
+    `;
+
+    const filteredResultsForPrint = FINAL_RESULTS.filter(item => selectedCriteria?.[item.tieu_chi]);
+    filteredResultsForPrint.forEach((item, index) => {
+        const displayIndex = getCircledNumber(index + 1);
+        // Loại bỏ HTML tags từ luận cứ khi in
+        const luanCuText = typeof item.luan_cu === 'string' ? item.luan_cu.replace(/<[^>]*>?/gm, '').trim() : '';
+
+        let starsHtml = '';
+        if (item.cham_diem === 0) {
+            starsHtml = `<span class="star-zero-print">🚫</span>`;
+        } else {
+            for (let i = 1; i <= 5; i++) {
+                starsHtml += `<span class="star-print">${i <= item.cham_diem ? '★' : '☆'}</span>`;
+            }
+        }
+
+        printHtmlContent += `
+                    <tr>
+                        <td><span class="tieu-chi-num-print">${displayIndex}</span>✅</td>
+                        <td>${item.tieu_chi}</td>
+                        <td><div class="print-rating-stars">${starsHtml}</div></td>
+                        <td>${luanCuText}</td>
+                    </tr>
+        `;
+    });
+
+    printHtmlContent += `
+                </tbody>
+            </table>
+            <div class="custom-print-footer">
+                Nguyễn Khoa - Chọn dãy số theo Kinh dịch, Bát tự, Thần số học phương đông, Năng lượng số
+            </div>
+        </body>
+        </html>
+    `;
+
+    const printWindow = window.open('', '_blank', 'height=600,width=800,scrollbars=yes');
+    if (printWindow) {
+        printWindow.document.open();
+        printWindow.document.write(printHtmlContent);
+        printWindow.document.close();
+        printWindow.focus();
+        printWindow.print();
+    } else {
+        alert("Trình duyệt chặn popup. Vui lòng cho phép popup để in báo cáo.");
+    }
+}
+
+
+// --- HÀM CHÍNH ---
+/**
+ * @function run
+ * @description Hàm chính thực hiện toàn bộ quá trình luận giải phong thủy dãy số.
+ * Thu thập dữ liệu, tính toán quẻ, luận giải các tiêu chí và hiển thị kết quả.
+ */
+function run() {
+    console.clear(); // Làm sạch console mỗi khi chạy để dễ debug
+    try {
+        const sdt = document.getElementById('phone').value.replace(/\D/g, '');
+        const y = +document.getElementById('year').value || 0;
+        const sex = document.getElementById('sex').value;
+        const dung = document.getElementById('dung').value;
+
+        if (!sdt || !y || sdt.length < 3) return alert('Vui lòng nhập đủ SĐT (ít nhất 3 số) và Năm sinh!');
+
+        // Tính toán quẻ Thượng, Hạ và Hào động
+        const qT_num = sumMod([...sdt.slice(0, Math.floor(sdt.length / 2))].map(Number), 8);
+        const qH_num = sumMod([...sdt.slice(Math.floor(sdt.length / 2))].map(Number), 8);
+        const hao_dong = sumMod([...sdt].map(Number), 6);
+
+        // Lấy thông tin quẻ gốc từ dữ liệu
+        const codeG = bin[qT_num] + bin[qH_num];
+        const G = ALL_DATA.data64[codeG];
+        if (!G) return alert(`Không có dữ liệu Quẻ Gốc cho mã: ${codeG}`);
+
+        // Tính toán quẻ Biến (bằng cách đảo hào động)
+        const codeB_arr = codeG.split('');
+        codeB_arr[6 - hao_dong] = codeB_arr[6 - hao_dong] === '1' ? '0' : '1';
+        const codeB_str = codeB_arr.join('');
+        const B = ALL_DATA.data64[codeB_str] || { ten_que: '?', y_nghia: 'N/A', cung_goc: '?', lines_detail: Array(6).fill(''), muc_do: 'Trung bình', y_nghia_chi_tiet: '' };
+
+        // Lưu thông tin quẻ vào biến toàn cục để sử dụng cho các hàm khác
+        ALL_QUE_INFO = {
+            G: G,
+            B: B,
+            hao_dong_num: hao_dong
+        };
+
+        const cungPhi = CUNG_PHI(y, sex);
+        document.getElementById('queGocTitle').innerHTML = `🔮 Quẻ Gốc (Họ ${G.cung_goc})`;
+        document.getElementById('queBienTitle').innerHTML = `🌀 Quẻ Biến (Họ ${B.cung_goc})`;
+        buildSum({
+            'SĐT': sdt,
+            'Năm sinh': `${y} (${canChi(y)})`,
+            'Giới tính': sex,
+            'Dụng thần': dung,
+            'Cung Phi': cungPhi,
+            'Mệnh (Nạp âm)': (ALL_DATA.napAm?.[canChi(y)]?.name || 'Không rõ'),
+            'Quẻ Gốc': `${G.ten_que} – ${short(G.y_nghia)}`,
+            'Hào động': `Hào ${hao_dong}`,
+            'Quẻ Biến': `${B.ten_que} – ${short(B.y_nghia)}`
+        });
+        document.getElementById('hexMain').innerHTML = veQue(codeG, hao_dong, false, G.lines_detail, G.the_hao, G.ung_hao);
+        document.getElementById('hexChange').innerHTML = veQue(codeB_str, hao_dong, true, B.lines_detail, 0, 0); // theHao, ungHao không áp dụng cho quẻ biến
+
+        let detailResults = [];
+
+        // --- Bắt đầu luận giải các tiêu chí chi tiết ---
+        // Tiêu chí 1: Dãy số quẻ dịch gốc và ý nghĩa
+        detailResults.push({ tieu_chi: TIEU_CHI_LIST[0], ket_qua: G.muc_do, luan_giai: createExpandableSection(`<b>${G.ten_que} (${G.muc_do || 'TB'})</b> >> ${G.y_nghia}`, G.y_nghia_chi_tiet) });
+        // Tiêu chí 2: Dãy số quẻ dịch biến và ý nghĩa
+        detailResults.push({ tieu_chi: TIEU_CHI_LIST[1], ket_qua: B.muc_do, luan_giai: createExpandableSection(`<b>${B.ten_que} (${B.muc_do || 'TB'})</b> >> ${B.y_nghia}`, B.y_nghia_chi_tiet) });
+        // Tiêu chí 3: Hào Thế
+        const lucThanTheTraCuu = ALL_DATA.lucThan[G.luc_than_the];
+        detailResults.push({ tieu_chi: TIEU_CHI_LIST[2], ket_qua: "Trung bình", luan_giai: createExpandableSection(`Hào ${G.the_hao} là <b>${G.luc_than_the}</b>: ${lucThanTheTraCuu ? lucThanTheTraCuu.the_ngan : '...'}`, lucThanTheTraCuu ? lucThanTheTraCuu.the_dai : '') });
+        // Tiêu chí 4: Hào Động
+        const haoDongDetailText = G.lines_detail[6 - hao_dong] || "";
+        const lucThanDong = haoDongDetailText.split(/[-–]/)[0].trim();
+        const lucThanDongTraCuu = ALL_DATA.lucThan[lucThanDong];
+        detailResults.push({ tieu_chi: TIEU_CHI_LIST[3], ket_qua: "Trung bình", luan_giai: createExpandableSection(`Hào ${hao_dong} là <b>${haoDongDetailText}</b>: ${lucThanDongTraCuu ? lucThanDongTraCuu.dong_ngan : '...'}`, lucThanDongTraCuu ? lucThanDongTraCuu.dong_dai : '') });
+        // Tiêu chí 5: Quẻ Thượng so với Cung Phi
+        const nguHanhCungPhi = cungPhiNguHanhMap[cungPhi];
+        const queThuong = tienThienMap[qT_num] || { ten: 'N/A', hanh: null };
+        const result5 = soSanhNguHanh(`Quẻ Thượng ${queThuong.ten}`, queThuong.hanh, `Cung Phi ${cungPhi}`, nguHanhCungPhi);
+        detailResults.push({ tieu_chi: TIEU_CHI_LIST[4], ket_qua: result5.ket_qua, luan_giai: createExpandableSection(result5.luan_giai, '') });
+        // Tiêu chí 6: Quẻ Hạ so với Cung Phi
+        const queHa = tienThienMap[qH_num] || { ten: 'N/A', hanh: null };
+        const result6 = soSanhNguHanh(`Quẻ Hạ ${queHa.ten}`, queHa.hanh, `Cung Phi ${cungPhi}`, nguHanhCungPhi);
+        detailResults.push({ tieu_chi: TIEU_CHI_LIST[5], ket_qua: result6.ket_qua, luan_giai: createExpandableSection(result6.luan_giai, '') });
+
+        // Tiêu chí 7: Ngũ hành dãy số so với cung phi
+        const nguHanhDaySo = nguHanhDay_JS(sdt);
+        const hanhCungPhi = cungPhiNguHanhMap[cungPhi];
+        if(nguHanhDaySo && hanhCungPhi) { // Kiểm tra cả hai giá trị có tồn tại
+            const resultNguHanhDay = soSanhNguHanh(`Ngũ hành Dãy số`, nguHanhDaySo, `Cung Phi`, hanhCungPhi);
+            detailResults.push({
+                tieu_chi: TIEU_CHI_LIST[6],
+                ket_qua: resultNguHanhDay.ket_qua,
+                luan_giai: createExpandableSection(resultNguHanhDay.luan_giai, '')
+            });
+        } else {
+            detailResults.push({
+                tieu_chi: TIEU_CHI_LIST[6],
+                ket_qua: "Trung bình",
+                luan_giai: createExpandableSection(`Không xác định được Ngũ hành của dãy số hoặc Cung Phi để so sánh.`, '')
+            });
+        }
+
+        // Tiêu chí 8: Quẻ gốc phối Cung Phi (Du Niên)
+        const normalizedCungGoc = normalizeName(G.cung_goc);
+        const normalizedCungPhi = normalizeName(cungPhi);
+        const duNienKey = `${normalizedCungGoc}-${normalizedCungPhi}`;
+        const duNienData = ALL_DATA.duNien[duNienKey] || { bat_bien: "N/A", cat_hung: "Trung bình", y_nghia: "Không có diễn giải." };
+        detailResults.push({ tieu_chi: TIEU_CHI_LIST[7], ket_qua: duNienData.cat_hung, luan_giai: createExpandableSection(`Họ quẻ <b>${G.cung_goc}</b> phối Cung Phi <b>${cungPhi}</b> được <b>${duNienData.bat_bien}</b>.`, duNienData.y_nghia) });
+
+        // Tiêu chí 9: Quẻ thượng so với Dụng thần
+        const dungThanArr = dung.split(',').map(item => normalizeName(item.trim())).filter(Boolean); // Lọc bỏ giá trị rỗng
+        let hoTro9 = false;
+        let luanGiai9_ngan = `Quẻ Thượng <b>${queThuong.ten} (${queThuong.hanh || 'Không rõ'})</b> không hỗ trợ cho Dụng thần (${dungThanArr.join(', ')}).`;
+        let luanGiai9_dai = `Dụng thần được chọn là: ${dungThanArr.join(', ')}. `;
+
+        if (dungThanArr.length > 0 && queThuong.hanh) {
+            for (const dt of dungThanArr) {
+                const hanhDungThan = cungPhiNguHanhMap[dt];
+                if (!hanhDungThan) continue; // Bỏ qua nếu không xác định được ngũ hành của dụng thần
+
+                if (queThuong.hanh === hanhDungThan) {
+                    luanGiai9_ngan = `Quẻ Thượng <b>${queThuong.ten} (${queThuong.hanh})</b> Tỷ hòa với Dụng thần <b>${dt} (${hanhDungThan})</b>.`;
+                    luanGiai9_dai += `Hai yếu tố này tỷ hòa, rất tốt cho sự cân bằng và ổn định.`;
+                    hoTro9 = true; break;
+                } else if (nguHanhRelations[queThuong.hanh]?.sinh === hanhDungThan) {
+                    luanGiai9_ngan = `Quẻ Thượng <b>${queThuong.ten} (${queThuong.hanh})</b> Tương Sinh cho Dụng thần <b>${dt} (${hanhDungThan})</b>.`;
+                    luanGiai9_dai += `Quẻ Thượng là ${queThuong.hanh}, tương sinh với Dụng thần ${dt} (${hanhDungThan}). Điều này mang lại sự hỗ trợ mạnh mẽ, phát triển thuận lợi.`;
+                    hoTro9 = true; break;
+                } else if (nguHanhRelations[hanhDungThan]?.sinh === queThuong.hanh) {
+                    luanGiai9_ngan = `Dụng thần <b>${dt} (${hanhDungThan})</b> Sinh Xuất cho Quẻ Thượng <b>${queThuong.ten} (${queThuong.hanh})</b>.`;
+                    luanGiai9_dai += `Quẻ Thượng bị Sinh Xuất bởi Dụng thần. Có thể tiêu hao năng lượng của Dụng thần, cần cân nhắc.`;
+                    hoTro9 = true; break; // Vẫn coi là "hỗ trợ" nhưng ở mức độ bình thường
+                } else if (nguHanhRelations[queThuong.hanh]?.khac === hanhDungThan) {
+                    luanGiai9_ngan = `Quẻ Thượng <b>${queThuong.ten} (${queThuong.hanh})</b> Tương Khắc Dụng thần <b>${dt} (${hanhDungThan})</b>.`;
+                    luanGiai9_dai += `Quẻ Thượng khắc Dụng thần. Có thể gây cản trở, xung đột hoặc khó khăn trong quá trình thực hiện mục tiêu.`;
+                    hoTro9 = false; break;
+                } else if (nguHanhRelations[hanhDungThan]?.khac === queThuong.hanh) {
+                    luanGiai9_ngan = `Dụng thần <b>${dt} (${hanhDungThan})</b> khắc Quẻ Thượng <b>${queThuong.ten} (${queThuong.hanh})</b>.`;
+                    luanGiai9_dai += `Quẻ Thượng bị Dụng thần khắc. Có thể gặp khó khăn hoặc bị áp chế, cần xem xét kỹ lưỡng.`;
+                    hoTro9 = false; break;
+                }
+            }
+        } else {
+            luanGiai9_dai += `Không có Dụng thần hợp lệ hoặc ngũ hành Quẻ Thượng không rõ để so sánh.`;
+        }
+        detailResults.push({ tieu_chi: TIEU_CHI_LIST[8], ket_qua: hoTro9 ? "Tốt" : "Trung bình", luan_giai: createExpandableSection(luanGiai9_ngan, luanGiai9_dai) });
+
+        // Tiêu chí 10: Quẻ hạ so với Dụng thần
+        let hoTro10 = false;
+        let luanGiai10_ngan = `Quẻ Hạ <b>${queHa.ten} (${queHa.hanh || 'Không rõ'})</b> không hỗ trợ cho Dụng thần (${dungThanArr.join(', ')}).`;
+        let luanGiai10_dai = `Dụng thần được chọn là: ${dungThanArr.join(', ')}. `;
+
+        if (dungThanArr.length > 0 && queHa.hanh) {
+            for (const dt of dungThanArr) {
+                const hanhDungThan = cungPhiNguHanhMap[dt];
+                if (!hanhDungThan) continue;
+
+                if (queHa.hanh === hanhDungThan) {
+                    luanGiai10_ngan = `Quẻ Hạ <b>${queHa.ten} (${queHa.hanh})</b> Tỷ hòa với Dụng thần <b>${dt} (${hanhDungThan})</b>.`;
+                    luanGiai10_dai += `Hai yếu tố này tỷ hòa, rất tốt cho sự cân bằng và ổn định.`;
+                    hoTro10 = true; break;
+                } else if (nguHanhRelations[queHa.hanh]?.sinh === hanhDungThan) {
+                    luanGiai10_ngan = `Quẻ Hạ <b>${queHa.ten} (${queHa.hanh})</b> Tương Sinh cho Dụng thần <b>${dt} (${hanhDungThan})</b>.`;
+                    luanGiai10_dai += `Quẻ Hạ là ${queHa.hanh}, tương sinh với Dụng thần ${dt} (${hanhDungThan}). Điều này mang lại sự hỗ trợ mạnh mẽ, giúp mọi việc hanh thông.`;
+                    hoTro10 = true; break;
+                } else if (nguHanhRelations[hanhDungThan]?.sinh === queHa.hanh) {
+                    luanGiai10_ngan = `Dụng thần <b>${dt} (${hanhDungThan})</b> Sinh Xuất cho Quẻ Hạ <b>${queHa.ten} (${queHa.hanh})</b>.`;
+                    luanGiai10_dai += `Quẻ Hạ bị Sinh Xuất bởi Dụng thần. Có thể tiêu hao năng lượng của Dụng thần, cần cân nhắc.`;
+                    hoTro10 = true; break;
+                } else if (nguHanhRelations[queHa.hanh]?.khac === hanhDungThan) {
+                    luanGiai10_ngan = `Quẻ Hạ <b>${queHa.ten} (${queHa.hanh})</b> Tương Khắc Dụng thần <b>${dt} (${hanhDungThan})</b>.`;
+                    luanGiai10_dai += `Quẻ Hạ khắc Dụng thần. Có thể gây cản trở, xung đột hoặc khó khăn trong quá trình thực hiện mục tiêu.`;
+                    hoTro10 = false; break;
+                } else if (nguHanhRelations[hanhDungThan]?.khac === queHa.hanh) {
+                    luanGiai10_ngan = `Dụng thần <b>${dt} (${hanhDungThan})</b> khắc Quẻ Hạ <b>${queHa.ten} (${queHa.hanh})</b>.`;
+                    luanGiai10_dai += `Quẻ Hạ bị Dụng thần khắc. Có thể gặp khó khăn hoặc bị áp chế, cần xem xét kỹ lưỡng.`;
+                    hoTro10 = false; break;
+                }
+            }
+        } else {
+            luanGiai10_dai += `Không có Dụng thần hợp lệ hoặc ngũ hành Quẻ Hạ không rõ để so sánh.`;
+        }
+        detailResults.push({ tieu_chi: TIEU_CHI_LIST[9], ket_qua: hoTro10 ? "Tốt" : "Trung bình", luan_giai: createExpandableSection(luanGiai10_ngan, luanGiai10_dai) });
+
+        // Tiêu chí 11: 2 số cuối tạo thành quẻ dịch
+        const haiSoCuoi = sdt.slice(-2);
+        const traCuuHaiSoCuoi = ALL_DATA.capSo?.[haiSoCuoi];
+        let luanGiai11_ngan = `Không tìm thấy thông tin cho cặp số cuối <b>${haiSoCuoi}</b>.`;
+        let luanGiai11_dai = '';
+        if (traCuuHaiSoCuoi) {
+            luanGiai11_ngan = `2 số cuối <b>${haiSoCuoi}</b> tạo thành quẻ <b>${traCuuHaiSoCuoi.ten_que} (${traCuuHaiSoCuoi.tot_xau || "TB"})</b>. Ý nghĩa: ${traCuuHaiSoCuoi.y_nghia}`;
+            luanGiai11_dai = traCuuHaiSoCuoi.y_nghia; // Chi tiết hơn có thể lấy từ đây nếu có
+        }
+        detailResults.push({ tieu_chi: TIEU_CHI_LIST[10], ket_qua: traCuuHaiSoCuoi ? (traCuuHaiSoCuoi.tot_xau || "Trung bình") : "Trung bình", luan_giai: createExpandableSection(luanGiai11_ngan, luanGiai11_dai) });
+
+        // Tiêu chí 12: Các cặp số hành trình
+        // Lấy 6 số cuối nếu SĐT dài hơn 6, nếu không thì lấy toàn bộ
+        const hanhTrinhSdt = sdt.length > 6 ? sdt.slice(-6) : sdt;
+        // Tách thành các cặp số (ví dụ: "123456" -> ["12", "34", "56"])
+        const capHanhTrinh = (hanhTrinhSdt.match(/.{1,2}/g) || []).filter(c => c.length === 2); // Đảm bảo là cặp 2 số
+
+        let cacQueHanhTrinhHtml = '';
+        if (capHanhTrinh.length > 0) {
+            cacQueHanhTrinhHtml += `<p>Các quẻ hành trình từ ${Math.min(sdt.length, 6)} số cuối của dãy số <b>${hanhTrinhSdt}</b> là:</p><ul>`;
+            capHanhTrinh.forEach(cap => {
+                const que = ALL_DATA.capSo?.[cap];
+                if (que) {
+                    cacQueHanhTrinhHtml += `<li><b>${cap}</b> → ${que.ten_que} (${que.tot_xau || 'TB'}): ${que.y_nghia}</li>`;
+                } else {
+                    cacQueHanhTrinhHtml += `<li><b>${cap}</b> → Không tìm thấy thông tin.</li>`;
+                }
+            });
+            cacQueHanhTrinhHtml += `</ul>`;
+        } else {
+            cacQueHanhTrinhHtml = 'Không tìm thấy đủ cặp số hành trình (yêu cầu ít nhất 2 số).';
+        }
+        detailResults.push({ tieu_chi: TIEU_CHI_LIST[11], ket_qua: "Trung bình", luan_giai: createExpandableSection(cacQueHanhTrinhHtml, '') });
+
+        // Tiêu chí 13: Cân bằng âm dương
+        const amDuongResult = luanAmDuong(sdt, y);
+        detailResults.push({ tieu_chi: TIEU_CHI_LIST[12], ket_qua: amDuongResult.ket_qua, luan_giai: createExpandableSection(amDuongResult.luan_giai, '') });
+        // Tiêu chí 14: Dãy số theo đương vận
+        const duongVanResult = luanDuongVan(sdt);
+        detailResults.push({ tieu_chi: TIEU_CHI_LIST[13], ket_qua: duongVanResult.ket_qua, luan_giai: createExpandableSection(duongVanResult.luan_giai, '') });
+        // Tiêu chí 15: Các cặp cát hung theo thần số & năng lượng
+        const thanSoResult = luanThanSo(sdt, ALL_DATA.nangLuong); // Hàm này giờ trả về HTML chi tiết
+        detailResults.push({ tieu_chi: TIEU_CHI_LIST[14], ket_qua: thanSoResult.ket_qua, luan_giai: thanSoResult.luan_giai });
+
+        // Tiêu chí 16: Tổ hợp đặc biệt 3 số cuối (không lặp)
+        const baSoCuoiKhongLap = capKhongLap_JS(sdt);
+        const traCuuBaSoCuoi = ALL_DATA.toHop?.[baSoCuoiKhongLap];
+        let luanGiai16_ngan = `Không tìm thấy tổ hợp 3 số cuối (không lặp) đặc biệt nào trong dãy số.`;
+        let luanGiai16_dai = '';
+        let ketQua16 = "Trung bình";
+        if (traCuuBaSoCuoi) {
+            luanGiai16_ngan = `3 số cuối (không lặp) là <b>${baSoCuoiKhongLap}</b> (${traCuuBaSoCuoi.ten_goi}) >> ${traCuuBaSoCuoi.y_nghia_ngan}`;
+            luanGiai16_dai = traCuuBaSoCuoi.y_nghia_dai;
+            ketQua16 = "Tốt"; // Coi là tốt nếu tìm thấy tổ hợp đặc biệt
+        }
+        detailResults.push({ tieu_chi: TIEU_CHI_LIST[15], ket_qua: ketQua16, luan_giai: createExpandableSection(luanGiai16_ngan, luanGiai16_dai) });
+
+        // Tiêu chí 17: Các tổ hợp số đặc biệt
+        const foundSpecialCombos = luanToHopDacBiet(sdt, ALL_DATA.toHop);
+        let specialComboHtml = '';
+        let ketQua17 = "Trung bình";
+
+        if (foundSpecialCombos.length > 0) {
+            ketQua17 = "Tốt";
+            foundSpecialCombos.forEach(comboKey => {
+                const toHopData = ALL_DATA.toHop[comboKey];
+                if (toHopData) {
+                    const summary = `<b>${comboKey}</b> (${toHopData.ten_goi}) – ${toHopData.y_nghia_ngan}`;
+                    specialComboHtml += createExpandableSection(summary, toHopData.y_nghia_dai);
+                } else {
+                    specialComboHtml += createExpandableSection(`<b>${comboKey}</b>: Không có dữ liệu luận giải chi tiết từ nguồn.`, '');
+                }
+            });
+            specialComboHtml = `Có ${foundSpecialCombos.length} tổ hợp số đặc biệt được tìm thấy:<br>` + specialComboHtml;
+        } else {
+            specialComboHtml = "Không tìm thấy tổ hợp 3 số liên tiếp đặc biệt nào trong dãy số (trừ các tổ hợp bắt đầu bằng 0).";
+        }
+        detailResults.push({ tieu_chi: TIEU_CHI_LIST[16], ket_qua: ketQua17, luan_giai: specialComboHtml });
+
+        // Tiêu chí 18: Tổ hợp số 0&5 ( sửa thành ghi chú)
+        let combo05ResultsHtml = '';
+        let ketQua18 = "Trung bình";
+
+        // Regex: (chữ số không phải 0/5) + (một hoặc nhiều 0/5) + (chữ số không phải 0/5)
+        // Dùng global flag để tìm tất cả các khớp
+        const regex05 = /(\d)[05]+(\d)/g;
+        let match;
+        let foundAny05Combo = false;
+
+        // Reset lastIndex của regex nếu nó đã được sử dụng trước đó
+        regex05.lastIndex = 0;
+
+        while ((match = regex05.exec(sdt)) !== null) {
+            const fullMatch = match[0]; // Ví dụ: "108", "253"
+            const firstDigit = match[1]; // Ví dụ: "1", "2"
+            const lastDigit = match[2]; // Ví dụ: "8", "3"
+
+            // Đảm bảo ký tự đầu và cuối không phải là '0' hoặc '5'
+            if (firstDigit !== '0' && firstDigit !== '5' && lastDigit !== '0' && lastDigit !== '5') {
+                const toHopData = ALL_DATA.toHop?.[fullMatch];
+                if (toHopData) {
+                    const summary = `Tổ hợp <b>${fullMatch}</b> (${toHopData.ten_goi}) – ${toHopData.y_nghia_ngan}`;
+                    combo05ResultsHtml += createExpandableSection(summary, toHopData.y_nghia_dai);
+                    foundAny05Combo = true;
+                } else {
+                    combo05ResultsHtml += createExpandableSection(`Tổ hợp <b>${fullMatch}</b>: Không có dữ liệu luận giải chi tiết từ nguồn.`, '');
+                    foundAny05Combo = true;
+                }
+            }
+        }
+
+        if (foundAny05Combo) {
+            ketQua18 = "Tốt"; // Coi là Tốt nếu tìm thấy bất kỳ tổ hợp 0&5 hợp lệ nào
+            combo05ResultsHtml = `Có các tổ hợp số 0&5 được tìm thấy:<br>` + combo05ResultsHtml;
+        } else {
+            combo05ResultsHtml = "Không tìm thấy tổ hợp số 0&5 nào theo quy tắc (ký tự đầu và cuối không phải 0/5, ở giữa có 0 hoặc 5).";
+        }
+        detailResults.push({ tieu_chi: TIEU_CHI_LIST[17], ket_qua: ketQua18, luan_giai: combo05ResultsHtml });
+
+
+        buildDetail(detailResults); // Xây dựng bảng chi tiết trên Tab 2
+        FINAL_RESULTS = detailResults.map(item => ({
+            tieu_chi: item.tieu_chi,
+            // Khởi tạo cham_diem mặc định: 5 cho Tốt, 1 cho Xấu, 3 cho Trung bình
+            cham_diem: item.ket_qua === 'Tốt' ? 5 : (item.ket_qua === 'Xấu' ? 1 : 3),
+            ket_qua: item.ket_qua,
+            luan_cu: item.luan_giai // Ban đầu lấy luan_giai từ detailResults, sẽ được sửa khi người dùng nhập
+        }));
+
+        renderTab3Filters(); // Render lại bộ lọc và báo cáo trên Tab 3
+
+    } catch (e) {
+        alert("Lỗi trong quá trình luận giải: " + e.message);
+        console.error("Lỗi trong hàm run():", e);
+    }
+}
+// --- KHỞI ĐỘNG VÀ XỬ LÝ TAB ---
+/**
+ * @function layDuLieuPhongThuy
+ * @description Hàm khởi động ứng dụng, được gọi khi trang web tải xong.
+ * Tải dữ liệu phong thủy từ Google Sheet (backend) thông qua Apps Script.
+ * @returns {void}
+ */
+google.script.run
+    .withSuccessHandler(res => {
+        // Ẩn màn hình loading và hiển thị nội dung chính
+        document.getElementById('app-loader').style.display = 'none';
+        document.getElementById('main-content').style.display = 'block';
+        if (!res.success) {
+            // Hiển thị lỗi nếu tải dữ liệu không thành công
+            document.body.innerHTML = `<p style="color:red; text-align:center; padding: 50px;">❌ Lỗi Tải Dữ Liệu: ${res.error}. Vui lòng kiểm tra lại Google Sheet và thử lại.</p>`;
+            return;
+        }
+        ALL_DATA = res; // Lưu trữ dữ liệu đã tải vào biến toàn cục
+        run(); // Chạy hàm luận giải chính ngay sau khi tải dữ liệu
+    })
+    .withFailureHandler(err => {
+        // Xử lý lỗi nếu có vấn đề khi giao tiếp với Apps Script backend
+        alert("LỖI KẾT NỐI SERVER: " + err.message);
+        console.error("LỖI BACKEND:", err);
+        document.getElementById('app-loader').innerHTML = `<span>❌ Lỗi không thể tải dữ liệu từ máy chủ. Vui lòng kiểm tra kết nối mạng hoặc liên hệ quản trị viên.</span>`;
+        document.getElementById('app-loader').style.color = 'red';
+    })
+    .layDuLieuPhongThuy(); // Gọi hàm Apps Script để lấy dữ liệu
+
+/**
+ * @event DOMContentLoaded
+ * @description Lắng nghe sự kiện click trên các nút tab để chuyển đổi giữa các tab.
+ */
+document.querySelectorAll('.tabs button').forEach(button => {
+    button.addEventListener('click', () => {
+        // Xóa lớp 'active' khỏi tất cả các nút tab và ẩn tất cả các tab content
+        document.querySelectorAll('.tabs button').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab').forEach(tab => tab.style.display = 'none');
+        // Thêm lớp 'active' cho nút được click và hiển thị tab content tương ứng
+        button.classList.add('active');
+        document.getElementById(button.dataset.tab).style.display = 'block';
+
+        // Nếu chuyển sang Tab 3, render lại bộ lọc và báo cáo
+        if (button.dataset.tab === 't3') {
+            renderTab3Filters();
+        }
+    });
+});
+</script>
+</body>
+</html>
